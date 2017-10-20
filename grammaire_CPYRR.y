@@ -4,7 +4,7 @@
 #include <stdlib.h>
     
     extern char* yytext;
-    extern int nb_ligne =1;
+    extern int nb_ligne;
     %}
 
 
@@ -166,19 +166,20 @@ e2                     : CSTE_ENTIERE
                        | PARENTHESE_OUVRANTE e PARENTHESE_FERMANTE  
 ;
 
-expression_booleen:    expression_booleen CHEVRON_INF expression_final
-                       | expression_booleen CHEVRON_INF EGALE expression_final
-                       | expression_booleen CHEVRON_SUP  expression_final
-                       | expression_booleen CHEVRON_SUP EGALE  expression_final
-                       | expression_booleen EGALE  expression_final
-                       | expression_booleen DIFF  expression_final              
+expression_booleen:    expression_booleen CHEVRON_INF expression_booleen_1
+                       | expression_booleen CHEVRON_INF EGALE expression_booleen_1
+                       | expression_booleen CHEVRON_SUP  expression_booleen_1
+                       | expression_booleen CHEVRON_SUP EGALE  expression_booleen_1
+                       | expression_booleen EGALE  expression_booleen_1
+                       | expression_booleen DIFF  expression_booleen_1        
                       
-                       | expression_booleen OU expression_final
-                       | expression_booleen NON expression_final
-                       | expression_final
+                       | expression_booleen OU expression_booleen_1
+                       | expression_booleen NON expression_booleen_1
+                       | expression_booleen_1
               
 ;
-expression_booleen_1: expression_booleen ET expression_final
+expression_booleen_1: expression_booleen_1 ET expression_final
+                     |expression_booleen_2
 ;
 expression_booleen_2: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
 ;
