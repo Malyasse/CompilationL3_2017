@@ -1,50 +1,56 @@
 %{
-#include "y.tab.h"
+  #include "y.tab.h"
   #include <stdio.h>
   #include <stdlib.h>
+  #include <string.h>
+  
+  int nb_ligne = 1;
+  int caractere = 0;
 %}
 
-DEBUT FIN PROG POINT_VIRGULE TYPE IDF DEUX_POINTS STRUCT FSTRUCT TABLEAU DE CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT ENTIER REEL BOOLEEN CARACTERE CHAINE CSTE_ENTIERE VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE OPAFF SI ALORS SINON FAIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE CSTE_REEL CSTE_BOOL CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF
 
 %%
-\+ {return (PLUS);}
-- {return (MOINS);}
-\* {return (MULT);}
-\/ {return (DIV);}
-\< {return (CHEVRON_INF);}
-\> {return (CHEVRON_SUP);}
-and {return (ET);}
-or {return (OU);}
-not {return (NON);}
-\= {return (EGALE);}
-\!\= {return (DIFF);}
-\( {return (PARENTHESE_OUVRANTE);}
-\) {return (PARENTHESE_FERMANTE);}
-\[ {return (CROCHET_OUVRANT);}
-\] {return (CROCHET_FERMANT);}
-\: {return (DEUX_POINTS);}
-\; {return (POINT_VIRGULE);}
-\, {return (VIRGULE);}
-\. {return (POINT);}
-int {return (ENTIER);}
-double {return (REEL);}
-bool {return (BOOLEEN);}
-char {return (CARACTERE);}
-string {return (CHAINE);}
-\{ {return (DEBUT);}
-\} {return (FIN);}
-Cpyrr {return (PROG);}
-var {return (VARIABLE);}
-struct {return (STRUCT);}
-array {return (TABLEAU);}
-\:\= {return (OPAFF);}
-procedure {return (PROCEDURE);}
-fonction {return (FONCTION);}
-return {return (RETOURNE);}
-[a-z_][a-zA-Z0-9_]*   {return (IDF);}
-0|[1-9][0-9]*   {return (CSTE_ENTIERE);}
-0|[1-9][0-9]*.[0-9][0-9]*   {return (CSTE_REEL);}
-true|false   {return (CSTE_BOOL);}
+\n {caractere = 0; ligne += 1;}
+[ \t]+ {caractere += strlen(yytext);}
+\+ {caractere += strlen(yytext); return (PLUS);}
+- {caractere += strlen(yytext); return (MOINS);}
+\* {caractere += strlen(yytext); return (MULT);}
+\/ {caractere += strlen(yytext); return (DIV);}
+\<  {caractere += strlen(yytext); return (CHEVRON_INF);}
+\> {caractere += strlen(yytext); return (CHEVRON_SUP);}
+\= {caractere += strlen(yytext); return (EGALE);}
+\!\= {caractere += strlen(yytext); return (DIFF);}
+\( {caractere += strlen(yytext); return (PARENTHESE_OUVRANTE);}
+\) {caractere += strlen(yytext); return (PARENTHESE_FERMANTE);}
+\[ {caractere += strlen(yytext); return (CROCHET_OUVRANT);}
+\] {caractere += strlen(yytext); return (CROCHET_FERMANT);}
+\: {caractere += strlen(yytext); return (DEUX_POINTS);}
+\; {caractere += strlen(yytext); return (POINT_VIRGULE);}
+\, {caractere += strlen(yytext); return (VIRGULE);}
+\. {caractere += strlen(yytext); return (POINT);}
+\{ {caractere += strlen(yytext); return (DEBUT);}
+\} {caractere += strlen(yytext); return (FIN);}
+\:\= {caractere += strlen(yytext); return (OPAFF);}
+true|false {caractere += strlen(yytext); return (CSTE_BOOL);}
+and {caractere += strlen(yytext); return (ET);}
+or {caractere += strlen(yytext); return (OU);}
+not {caractere += strlen(yytext); return (NON);}
+int {caractere += strlen(yytext); return (ENTIER);}
+double {caractere += strlen(yytext); return (REEL);}
+bool {caractere += strlen(yytext); return (BOOLEEN);}
+char {caractere += strlen(yytext); return (CARACTERE);}
+string {caractere += strlen(yytext); return (CHAINE);}
+procedure {caractere += strlen(yytext); return (PROCEDURE);}
+fonction {caractere += strlen(yytext); return (FONCTION);}
+return {caractere += strlen(yytext); return (RETOURNE);}
+Cpyrr {caractere += strlen(yytext); return (PROG);}
+var {caractere += strlen(yytext); return (VARIABLE);}
+struct {caractere += strlen(yytext); return (STRUCT);}
+array {caractere += strlen(yytext); return (TABLEAU);}
+\/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
+[a-z_][a-zA-Z0-9_]* {caractere += strlen(yytext); return (IDF);}
+0|[1-9][0-9]* {caractere += strlen(yytext); return (CSTE_ENTIERE);}
+0|[1-9][0-9]*\.[0-9]+ {caractere += strlen(yytext); return (CSTE_REEL);}
 %%
 
 
