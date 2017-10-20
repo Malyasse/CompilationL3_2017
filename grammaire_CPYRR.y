@@ -7,8 +7,17 @@
     %}
 
 
-%token DEBUT FIN PROG POINT_VIRGULE TYPE IDF DEUX_POINTS STRUCT FSTRUCT TABLEAU DE CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT ENTIER REEL BOOLEEN CARACTERE CHAINE CSTE_ENTIERE VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE OPAFF SI ALORS SINON FAIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+%token IDF 
 
+%token OPAFF POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANT
+
+%token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF
+
+%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL
+
+%token ENTIER REEL BOOLEEN CARACTERE CHAINE 
+
+%token VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE SI ALORS SINON FAIRE STRUCT FSTRUCT  DEBUT FIN PROG TABLEAU DE TYPE
 
 %%
 programme             : PROG corps
@@ -18,14 +27,15 @@ corps                 : liste_declarations liste_instructions
                       | liste_instructions
 ;
 
-liste_declarations    : declaration 
-                      | liste_declarations POINT_VIRGULE declaration
+liste_declarations    : declaration POINT_VIRGULE
+                      | liste_declarations declaration POINT_VIRGULE
 ;
 
 liste_instructions    : DEBUT suite_liste_inst FIN
 ;
 
-suite_liste_inst      : instruction
+suite_liste_inst      : VIDE
+                      | instruction
                       | suite_liste_inst POINT_VIRGULE instruction
 ;
 
@@ -51,8 +61,8 @@ liste_dimensions      : une_dimension
 une_dimension         : expression POINT POINT expression
 ;
 
-liste_champs          : un_champ
-                      | liste_champs POINT_VIRGULE un_champ
+liste_champs          : un_champ POINT_VIRGULE
+                      | liste_champs un_champ POINT_VIRGULE
 ;
 
 un_champ              : IDF DEUX_POINTS nom_type
@@ -75,7 +85,7 @@ declaration_variable  : VARIABLE IDF DEUX_POINTS nom_type
 declaration_procedure : PROCEDURE IDF liste_parametres corps
 ;
 
-declaration_fonction  : FONCTION IDF liste_parametres RETOURNE type_simple corps
+declaration_fonction  : FONCTION IDF liste_parametres RETOURNE type_simple DEUX_POINTS corps
 ;
 
 liste_parametres      :
@@ -126,15 +136,50 @@ tant_que              : TANT_QUE expression FAIRE liste_instructions
 affectation           : variable OPAFF expression
 ;
 
-variable              : description des formes possibles des variables
+variable              : IDF
+                      | IDF CROCHET_OUVRANT liste_expressions_arithmetique CROCHET_FERMANT
+
+;
+liste_expressions_arithmetique : expression_arithmetique
+                               | liste_expressions_arithmetique  VIRGULE expression_arithmetique
+;
+expression            :expression_arithmetique
+                      |expression_booleen
+                   
+;
+expression_arithmetique: e
 ;
 
-expression            : description des formes possibles des expressions
+e                      : e PLUS e1  
+                       | e MOINS e1 
+                       | e1
+;
+
+e1                     : e1 MULT e2 
+                       | e1 DIV e2 
+                       | e2   
+;
+
+e2                     : CSTE_ENTIERE
+                       | CSTE_REEL
+                       | PARENTHESE_OUVRANTE e PARENTHESE_FERMANTE  
+;
+
+expression_booleen:    expression_booleen CHEVRON_INF expression_final
+                       | expression_booleen CHEVRON_SUP  expression_final
+                       | expression_booleen EGALE  expression_final
+                       | expression_booleen DIFF  expression_final
+                       | PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+                       | expression_final
+              
+;
+expression_final :     expression_arithmetique
+                       | CSTE_BOOL
 ;
 %%
 
 
 
 int yyerror(){
-    fprintf(stderr,"Erreur\n");
+    fprintf(stderr,"Erreur de syntaxe ligne %d\n",nb_ligne);
 }
