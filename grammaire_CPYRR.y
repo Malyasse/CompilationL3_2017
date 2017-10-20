@@ -12,7 +12,7 @@
 
 %token OPAFF POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
 
-%token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF
+%token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT
 
 %token CSTE_REEL CSTE_ENTIERE CSTE_BOOL
 
@@ -20,11 +20,15 @@
 
 %token VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE SI ALORS SINON FAIRE STRUCT FSTRUCT  DEBUT FIN PROG TABLEAU DE TYPE
 
+
+
+
 %%
 programme             : PROG corps
 ;
 
-corps                 : liste_declarations liste_instructions
+corps                 : VIDE
+                      | liste_declarations liste_instructions
                       | liste_instructions
 ;
 
@@ -36,8 +40,8 @@ liste_instructions    : DEBUT suite_liste_inst FIN
 ;
 
 suite_liste_inst      : VIDE
-                      | instruction
-                      | suite_liste_inst POINT_VIRGULE instruction
+                      | instruction POINT_VIRGULE
+                      | suite_liste_inst instruction POINT_VIRGULE
 ;
 
 declaration           : declaration_type
@@ -141,13 +145,17 @@ variable              : IDF
                       | IDF CROCHET_OUVRANT liste_expressions_arithmetique CROCHET_FERMANT
 
 ;
+
+expression            : expression_arithmetique
+                      | expression_booleen
+; 
+
 liste_expressions_arithmetique : expression_arithmetique
-                               | liste_expressions_arithmetique  VIRGULE expression_arithmetique
+                                |liste_expressions_arithmetique  VIRGULE expression_arithmetique
 ;
-expression            :expression_arithmetique
-                      |expression_booleen
-                   
-;
+
+
+
 expression_arithmetique: e
 ;
 
@@ -160,32 +168,49 @@ e1                     : e1 MULT e2
                        | e1 DIV e2 
                        | e2   
 ;
+ e2:                    e2 INCREMENT
+                       |e2 DECREMENT
+                       |e3
+ ;
 
-e2                     : CSTE_ENTIERE
+e3                    : CSTE_ENTIERE
                        | CSTE_REEL
+                       | IDF
                        | PARENTHESE_OUVRANTE e PARENTHESE_FERMANTE  
 ;
 
-expression_booleen:    expression_booleen CHEVRON_INF expression_booleen_1
-                       | expression_booleen CHEVRON_INF EGALE expression_booleen_1
-                       | expression_booleen CHEVRON_SUP  expression_booleen_1
-                       | expression_booleen CHEVRON_SUP EGALE  expression_booleen_1
-                       | expression_booleen EGALE  expression_booleen_1
-                       | expression_booleen DIFF  expression_booleen_1        
-                      
-                       | expression_booleen OU expression_booleen_1
-                       | expression_booleen NON expression_booleen_1
+
+
+expression_booleen:      expression_booleen OU expression_booleen_1
                        | expression_booleen_1
-              
+                       ;
+
+expression_booleen_1:  expression_booleen_1 ET expression_booleen_2
+                     | expression_booleen_2
 ;
-expression_booleen_1: expression_booleen_1 ET expression_final
-                     |expression_booleen_2
+
+expression_booleen_2:  expression_booleen_2 EGALE  expression_booleen_3
+                     | expression_booleen_2 DIFF  expression_booleen_3
+                     | expression_booleen_3
 ;
-expression_booleen_2: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+
+expression_booleen_3:  expression_booleen_3 CHEVRON_INF EGALE expression_booleen_4
+                     | expression_booleen_3 CHEVRON_SUP EGALE  expression_booleen_4
+                     | expression_booleen_3 CHEVRON_INF expression_booleen_4
+                     | expression_booleen_3 CHEVRON_SUP  expression_booleen_4
+                     | expression_booleen_4
 ;
-expression_final :     expression_arithmetique
-                       | CSTE_BOOL
+                     
+
+expression_booleen_4:   expression_booleen_4 NON expression_booleen_5
+                      | expression_booleen_5
+                      ;
+
+expression_booleen_5: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+                     | expression_arithmetique    /* origine des conflits decalage/reduction et reduction/reduction */
+                     | CSTE_BOOL
 ;
+
 %%
 
 
@@ -193,3 +218,5 @@ expression_final :     expression_arithmetique
 int yyerror(){
     fprintf(stderr,"Erreur de syntaxe ligne %d\n",nb_ligne);
 }
+
+
