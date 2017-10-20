@@ -4,12 +4,13 @@
 #include <stdlib.h>
     
     extern char* yytext;
+    extern int nb_ligne =1;
     %}
 
 
 %token IDF 
 
-%token OPAFF POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANT
+%token OPAFF POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
 
 %token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF
 
@@ -115,7 +116,7 @@ appel                 : IDF liste_arguments
 ;
 
 liste_arguments       :
-                      :  PARENTHESE_OUVRANTE liste_args PARENTHESE_FERMANTE
+                      |  PARENTHESE_OUVRANTE liste_args PARENTHESE_FERMANTE
 ;
 
 liste_args            : un_arg
@@ -166,12 +167,20 @@ e2                     : CSTE_ENTIERE
 ;
 
 expression_booleen:    expression_booleen CHEVRON_INF expression_final
+                       | expression_booleen CHEVRON_INF EGALE expression_final
                        | expression_booleen CHEVRON_SUP  expression_final
+                       | expression_booleen CHEVRON_SUP EGALE  expression_final
                        | expression_booleen EGALE  expression_final
-                       | expression_booleen DIFF  expression_final
-                       | PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+                       | expression_booleen DIFF  expression_final              
+                      
+                       | expression_booleen OU expression_final
+                       | expression_booleen NON expression_final
                        | expression_final
               
+;
+expression_booleen_1: expression_booleen ET expression_final
+;
+expression_booleen_2: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
 ;
 expression_final :     expression_arithmetique
                        | CSTE_BOOL
