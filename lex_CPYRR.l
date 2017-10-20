@@ -10,8 +10,11 @@
 
 
 %%
-\n {caractere = 0; ligne += 1;}
+\n {caractere = 0; nb_ligne += 1;}
 [ \t]+ {caractere += strlen(yytext);}
+
+\+\+ {caractere += strlen(yytext); return (INCREMENT);}
+-- {caractere += strlen(yytext); return (DECREMENT);}
 \+ {caractere += strlen(yytext); return (PLUS);}
 - {caractere += strlen(yytext); return (MOINS);}
 \* {caractere += strlen(yytext); return (MULT);}
@@ -47,6 +50,10 @@ Cpyrr {caractere += strlen(yytext); return (PROG);}
 var {caractere += strlen(yytext); return (VARIABLE);}
 struct {caractere += strlen(yytext); return (STRUCT);}
 array {caractere += strlen(yytext); return (TABLEAU);}
+if {caractere += strlen(yytext); return (SI);}
+then {caractere += strlen(yytext); return (ALORS);}
+else {caractere += strlen(yytext); return (SINON);}
+void {caractere += strlen(yytext); return (VIDE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
 [a-z_][a-zA-Z0-9_]* {caractere += strlen(yytext); return (IDF);}
 0|[1-9][0-9]* {caractere += strlen(yytext); return (CSTE_ENTIERE);}
