@@ -12,7 +12,6 @@
 %%
 \n {caractere = 0; nb_ligne += 1;}
 [ \t]+ {caractere += strlen(yytext);}
-
 \+\+ {caractere += strlen(yytext); return (INCREMENT);}
 -- {caractere += strlen(yytext); return (DECREMENT);}
 \+ {caractere += strlen(yytext); return (PLUS);}
@@ -58,6 +57,7 @@ void {caractere += strlen(yytext); return (VIDE);}
 [a-z_][a-zA-Z0-9_]* {caractere += strlen(yytext); return (IDF);}
 0|[1-9][0-9]* {caractere += strlen(yytext); return (CSTE_ENTIERE);}
 0|[1-9][0-9]*\.[0-9]+ {caractere += strlen(yytext); return (CSTE_REEL);}
+. { ;}
 %%
 
 

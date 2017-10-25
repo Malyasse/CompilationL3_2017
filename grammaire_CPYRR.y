@@ -5,6 +5,7 @@
     
     extern char* yytext;
     extern int nb_ligne;
+    extern int caractere;
     %}
 
 
@@ -216,7 +217,9 @@ expression_booleen_5: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
 
 
 int yyerror(){
-    fprintf(stderr,"Erreur de syntaxe ligne %d\n",nb_ligne);
+
+    fprintf(stderr,"Erreur de syntaxe a la ligne %d vers le caractere %d\n",nb_ligne, caractere);
+    
 }
 
 
