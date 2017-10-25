@@ -2,9 +2,14 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-    
+
     extern char* yytext;
     extern int nb_ligne;
+    extern int caractere;
+
+    int yylex();
+    int yyerror();
+   
     %}
 
 
@@ -157,18 +162,19 @@ liste_expressions_entiere       : expression_entiere
 
 expression             : expression_chaine
                        | expression_booleen
-                       | expression_reel
+			 //| expression_arithmetique
+                       
 ;
 
 expression_booleen     : expression_booleen OU expression_booleen_1
                        | expression_booleen_1
 ;
 
-expression_booleen_1   :  expression_booleen_1 ET expression_booleen_2
+expression_booleen_1   : expression_booleen_1 ET expression_booleen_2
                        | expression_booleen_2
 ;
 
-expression_booleen_2   :  expression_booleen_2 EGALE  expression_booleen_3
+expression_booleen_2   : expression_booleen_2 EGALE  expression_booleen_3
                        | expression_booleen_2 DIFF  expression_booleen_3
                        | expression_booleen_3
 ;
@@ -185,11 +191,15 @@ expression_booleen_4   : expression_booleen_4 NON expression_booleen_5
                        | expression_booleen_5
 ;
 
-expression_booleen_5   :// PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
-                        expression_entiere  
+expression_booleen_5   : PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+                       | expression_arithmetique
                        | CSTE_BOOL
+                       | IDF
 ;
 
+expression_arithmetique   : expression_entiere
+                          | expression_reel
+;
 
 expression_entiere        : expression_entiere PLUS expression_entiere_1  
                           | expression_entiere MOINS expression_entiere_1
@@ -206,10 +216,9 @@ expression_entiere_2      : expression_entiere_2 INCREMENT
  ;
 
 expression_entiere_3      : CSTE_ENTIERE
-		          | IDF
-		          | PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE  
+	   	        
+		          
 ;
-
 
 expression_reel           : expression_reel PLUS expression_reel_1  
                           | expression_reel MOINS expression_reel_1
@@ -226,9 +235,9 @@ expression_reel_2         : expression_reel_2 INCREMENT
  ;
 
 expression_reel_3         : //CSTE_ENTIERE
-		          CSTE_REEL
-			    //| IDF
-		          | PARENTHESE_OUVRANTE expression_reel PARENTHESE_FERMANTE  
+		          CSTE_REEL			 
+			  // | IDF
+			  //  | PARENTHESE_OUVRANTE expression_reel PARENTHESE_FERMANTE  
 ;
 
 expression_chaine         : expression_chaine PLUS chaine
@@ -244,7 +253,8 @@ chaine                    : CSTE_CHAINE
 
 
 int yyerror(){
-    fprintf(stderr,"Erreur de syntaxe ligne %d\n",nb_ligne);
+  fprintf(stderr,"Erreur de syntaxe a la ligne %d pres du caractere %d \n",nb_ligne,caractere);
+    return -1;
 }
 
 
