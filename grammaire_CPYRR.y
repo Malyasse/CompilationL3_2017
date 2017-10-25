@@ -14,7 +14,7 @@
 
 %token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT
 
-%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL
+%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL CSTE_CHAINE
 
 %token ENTIER REEL BOOLEEN CARACTERE CHAINE 
 
@@ -63,7 +63,7 @@ liste_dimensions      : une_dimension
                       | liste_dimensions VIRGULE une_dimension
 ;
 
-une_dimension         : expression POINT POINT expression
+une_dimension         : expression_entiere POINT POINT expression_entiere
 ;
 
 liste_champs          : un_champ POINT_VIRGULE
@@ -130,85 +130,113 @@ liste_args            : un_arg
 un_arg                : expression
 ;
 
-condition             : SI expression
+condition             : SI expression_booleen
                          ALORS liste_instructions
                          SINON liste_instructions
 ;
 
-tant_que              : TANT_QUE expression FAIRE liste_instructions
+tant_que              : TANT_QUE expression_booleen FAIRE liste_instructions
 ;
 
 affectation           : variable OPAFF expression
 ;
 
 variable              : IDF
-                      | IDF CROCHET_OUVRANT liste_expressions_arithmetique CROCHET_FERMANT
+                      | IDF CROCHET_OUVRANT liste_expressions_entiere CROCHET_FERMANT
 
 ;
 
-expression            : expression_arithmetique
-                      | expression_booleen
-; 
+//expression            : expression_arithmetique
+//                     | expression_booleen
+//; 
 
-liste_expressions_arithmetique : expression_arithmetique
-                                |liste_expressions_arithmetique  VIRGULE expression_arithmetique
+liste_expressions_entiere       : expression_entiere
+                                | liste_expressions_entiere  VIRGULE expression_entiere
 ;
 
 
-
-expression_arithmetique: e
+expression             : expression_chaine
+                       | expression_booleen
+                       | expression_reel
 ;
 
-e                      : e PLUS e1  
-                       | e MOINS e1 
-                       | e1
-;
-
-e1                     : e1 MULT e2 
-                       | e1 DIV e2 
-                       | e2   
-;
- e2:                    e2 INCREMENT
-                       |e2 DECREMENT
-                       |e3
- ;
-
-e3                    : CSTE_ENTIERE
-                       | CSTE_REEL
-                       | IDF
-                       | PARENTHESE_OUVRANTE e PARENTHESE_FERMANTE  
-;
-
-
-
-expression_booleen:      expression_booleen OU expression_booleen_1
+expression_booleen     : expression_booleen OU expression_booleen_1
                        | expression_booleen_1
-                       ;
-
-expression_booleen_1:  expression_booleen_1 ET expression_booleen_2
-                     | expression_booleen_2
 ;
 
-expression_booleen_2:  expression_booleen_2 EGALE  expression_booleen_3
-                     | expression_booleen_2 DIFF  expression_booleen_3
-                     | expression_booleen_3
+expression_booleen_1   :  expression_booleen_1 ET expression_booleen_2
+                       | expression_booleen_2
 ;
 
-expression_booleen_3:  expression_booleen_3 CHEVRON_INF EGALE expression_booleen_4
-                     | expression_booleen_3 CHEVRON_SUP EGALE  expression_booleen_4
-                     | expression_booleen_3 CHEVRON_INF expression_booleen_4
-                     | expression_booleen_3 CHEVRON_SUP  expression_booleen_4
-                     | expression_booleen_4
+expression_booleen_2   :  expression_booleen_2 EGALE  expression_booleen_3
+                       | expression_booleen_2 DIFF  expression_booleen_3
+                       | expression_booleen_3
+;
+
+expression_booleen_3   : expression_booleen_3 CHEVRON_INF EGALE expression_booleen_4
+                       | expression_booleen_3 CHEVRON_SUP EGALE  expression_booleen_4
+                       | expression_booleen_3 CHEVRON_INF expression_booleen_4
+                       | expression_booleen_3 CHEVRON_SUP  expression_booleen_4
+                       | expression_booleen_4
 ;
                      
 
-expression_booleen_4:   expression_booleen_4 NON expression_booleen_5
-                      | expression_booleen_5
-                      ;
+expression_booleen_4   : expression_booleen_4 NON expression_booleen_5
+                       | expression_booleen_5
+;
 
-expression_booleen_5: PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
-                     | expression_arithmetique    /* origine des conflits decalage/reduction et reduction/reduction */
-                     | CSTE_BOOL
+expression_booleen_5   :// PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
+                        expression_entiere  
+                       | CSTE_BOOL
+;
+
+
+expression_entiere        : expression_entiere PLUS expression_entiere_1  
+                          | expression_entiere MOINS expression_entiere_1
+		          | expression_entiere_1
+;
+
+expression_entiere_1      : expression_entiere_1 MULT expression_entiere_2
+                          | expression_entiere_1 DIV expression_entiere_2
+                          | expression_entiere_2
+;
+expression_entiere_2      : expression_entiere_2 INCREMENT
+                          | expression_entiere_2 DECREMENT
+                          | expression_entiere_3 
+ ;
+
+expression_entiere_3      : CSTE_ENTIERE
+		          | IDF
+		          | PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE  
+;
+
+
+expression_reel           : expression_reel PLUS expression_reel_1  
+                          | expression_reel MOINS expression_reel_1
+		          | expression_reel_1
+;
+
+expression_reel_1         : expression_reel_1 MULT expression_reel_2
+                          | expression_reel_1 DIV expression_reel_2
+                          | expression_reel_2
+;
+expression_reel_2         : expression_reel_2 INCREMENT
+                          | expression_reel_2 DECREMENT
+                          | expression_reel_3 
+ ;
+
+expression_reel_3         : //CSTE_ENTIERE
+		          CSTE_REEL
+			    //| IDF
+		          | PARENTHESE_OUVRANTE expression_reel PARENTHESE_FERMANTE  
+;
+
+expression_chaine         : expression_chaine PLUS chaine
+                          | chaine
+;
+
+chaine                    : CSTE_CHAINE
+			    // | IDF
 ;
 
 %%

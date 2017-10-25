@@ -54,6 +54,7 @@ if {caractere += strlen(yytext); return (SI);}
 then {caractere += strlen(yytext); return (ALORS);}
 else {caractere += strlen(yytext); return (SINON);}
 void {caractere += strlen(yytext); return (VIDE);}
+\".*\" {caractere += strlen(yytext); return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
 [a-z_][a-zA-Z0-9_]* {caractere += strlen(yytext); return (IDF);}
 0|[1-9][0-9]* {caractere += strlen(yytext); return (CSTE_ENTIERE);}
