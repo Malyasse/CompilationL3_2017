@@ -52,12 +52,13 @@ array {caractere += yyleng; return (TABLEAU);}
 if {caractere += yyleng; return (SI);}
 then {caractere += yyleng; return (ALORS);}
 else {caractere += yyleng; return (SINON);}
-(void) {caractere += yyleng; return (VIDE);}
+void {caractere += yyleng; return (VIDE);}
 \".*\" {caractere += yyleng; return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
 [a-z_][a-zA-Z0-9_]* {caractere += yyleng; return (IDF);}
 0|[1-9][0-9]* {caractere += yyleng; return (CSTE_ENTIERE);}
 0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; return (CSTE_REEL);}
+. { ;}
 %%
 
 int yywrap(){
