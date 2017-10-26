@@ -253,7 +253,7 @@ chaine                    : CSTE_CHAINE
 
 
 int yyerror(){
-  fprintf(stderr,"Erreur de syntaxe a la ligne %d pres du caractere %d \n",nb_ligne,caractere);
+  fprintf(stderr,"Erreur de syntaxe a la ligne %d pres du caractere %d \n", nb_ligne, caractere);
     return -1;
 }
 
