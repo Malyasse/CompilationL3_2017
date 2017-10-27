@@ -18,6 +18,8 @@
 - {caractere += yyleng; return (MOINS);}
 \* {caractere += yyleng; return (MULT);}
 \/ {caractere += yyleng; return (DIV);}
+\<\= {caractere += yyleng; return (CHEVRON_INF_EGALE);}
+\>\= {caractere += yyleng; return (CHEVRON_SUP_EGALE);}
 \<  {caractere += yyleng; return (CHEVRON_INF);}
 \> {caractere += yyleng; return (CHEVRON_SUP);}
 \= {caractere += yyleng; return (EGALE);}
@@ -33,8 +35,17 @@
 \{ {caractere += yyleng; return (DEBUT);}
 \} {caractere += yyleng; return (FIN);}
 \:\= {caractere += yyleng; return (OPAFF);}
+\%  {caractere += yyleng; return (MODULO);}
+type {caractere += yyleng; return (TYPE);}
+fstruct {caractere += yyleng; return (FSTRUCT);}
+struct {caractere += yyleng; return (STRUCT);}
 true|false {caractere += yyleng; return (CSTE_BOOL);}
-and {caractere += yyleng; return (ET);}
+and {caractere += yyleng; return (ET);} 
+do {caractere += yyleng; return (FAIRE);}
+while {caractere += yyleng; return (TANT_QUE);}
+if {caractere += yyleng; return (SI);}
+then {caractere += yyleng; return (ALORS);}
+else {caractere += yyleng; return (SINON);}
 or {caractere += yyleng; return (OU);}
 not {caractere += yyleng; return (NON);}
 int {caractere += yyleng; return (ENTIER);}
@@ -43,17 +54,17 @@ bool {caractere += yyleng; return (BOOLEEN);}
 char {caractere += yyleng; return (CARACTERE);}
 string {caractere += yyleng; return (CHAINE);}
 procedure {caractere += yyleng; return (PROCEDURE);}
-fonction {caractere += yyleng; return (FONCTION);}
+function {caractere += yyleng; return (FONCTION);}
 return {caractere += yyleng; return (RETOURNE);}
 Cpyrr {caractere += yyleng; return (PROG);}
 var {caractere += yyleng; return (VARIABLE);}
-struct {caractere += yyleng; return (STRUCT);}
+of  {caractere += yyleng; return (DE);}
 array {caractere += yyleng; return (TABLEAU);}
-if {caractere += yyleng; return (SI);}
-then {caractere += yyleng; return (ALORS);}
-else {caractere += yyleng; return (SINON);}
 void {caractere += yyleng; return (VIDE);}
-\".*\" {caractere += yyleng; return (CSTE_CHAINE);}
+read {caractere += yyleng; return (LIRE);}
+write {caractere += yyleng; return (ECRIRE);}
+\'[^']\' {caractere += yyleng; return (CSTE_CARACTERE);}
+\"[^"]*\" {caractere += yyleng; return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
 [a-z_][a-zA-Z0-9_]* {caractere += yyleng; return (IDF);}
 0|[1-9][0-9]* {caractere += yyleng; return (CSTE_ENTIERE);}
@@ -61,9 +72,8 @@ void {caractere += yyleng; return (VIDE);}
 . { ;}
 %%
 
-int yywrap(){
-    fprintf(stdout,"%s",yytext);
-    return 1;
-}
+/*int yywrap(){
+
+}*/
 
 

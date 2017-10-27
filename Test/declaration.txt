@@ -1,8 +1,48 @@
 Cpyrr 
 
+var xSzeerdhD_tht_1:int;     /* test de la reconnaissance des IDFs et des declarations de base */
+var b:bool;
+var c:string[(7*9*63+455)/(6*945-86)];    /* test declaration d'une chaine avec une expression arithmetique pour la taille */
+type tml : array [5..7] of int;    /* declaration d'un tableau simple d'entier */
+type t : array[(2)..3] of bool;      /* declaration d'un tableau simple de booleen */
+type t : array[(x)..f(e,l)] of string[10];    /* definission d'un tableau de chaines avec un appel de fonction pour definir l'indice max */  /* probleme si l'IDF n'a pas de parenthese autour de lui */
+type t : array[(x)..z[f(e,l)]%c(g,o,p)*h+u(2)/10,(gfd)..f[fdsfsd+iio].df[lk]] of string[10];    /* declaration d'un tableau multidimensionnel avec des bornes definit grace a des expressions */
+
+type s : /* Declaration d'une structure */
+struct
+     y:int;
+     b:string[10];
+    
+     ta:t;
+fstruct;
+
+var s1:s; /* Declaration d'une variable de type structure*/
+
+type t3:array[0..p.z.b.t[7].i+f(z)] of s; /* Declaration d'un tableau de structure */
+
+function f (b:int;s:string[75]) return int :/* Declaration d'une fonction a deux arguments avec un bloc de déclaration et un bloc d'instruction */
+   var gh:string[20];
+   type a:array[0..45] of int;
+
 {
+   a[(9*45*87)/96*145+g(47)]:=12;
+   return 0;
+};
 
-   x:=x++;  
 
+procedure p (a:int)   /* Declaration d'une procedure a deux arguments avec un bloc de déclaration et un bloc d'instruction */
+    type a_8: struct
+      
+        testy : char;
+        teste : string[5];
+    fstruct;
+{
+   a[(9*45*87)/96*145-g(47)]:=12;
+   return ;
+};
+
+{
+   void
 }
+
 

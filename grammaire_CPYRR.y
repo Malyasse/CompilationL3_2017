@@ -15,11 +15,11 @@
 
 %token IDF 
 
-%token OPAFF POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+%token POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE 
 
-%token PLUS MOINS MULT DIV CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT
+%token  OPAFF PLUS MOINS MULT DIV MODULO CHEVRON_INF_EGALE CHEVRON_SUP_EGALE CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT LIRE ECRIRE
 
-%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL CSTE_CHAINE
+%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL CSTE_CHAINE CSTE_CARACTERE
 
 %token ENTIER REEL BOOLEEN CARACTERE CHAINE 
 
@@ -59,7 +59,8 @@ declaration_type      : TYPE IDF DEUX_POINTS suite_declaration_type
 ;
 
 suite_declaration_type : STRUCT liste_champs FSTRUCT
-                       | TABLEAU dimension DE nom_type
+                       | TABLEAU dimension DE nom_type 
+;
 
 dimension             : CROCHET_OUVRANT liste_dimensions CROCHET_FERMANT
 ;
@@ -68,7 +69,7 @@ liste_dimensions      : une_dimension
                       | liste_dimensions VIRGULE une_dimension
 ;
 
-une_dimension         : expression_entiere POINT POINT expression_entiere
+une_dimension         : expression POINT POINT expression 
 ;
 
 liste_champs          : un_champ POINT_VIRGULE
@@ -86,7 +87,7 @@ type_simple           : ENTIER
                       | REEL
                       | BOOLEEN
                       | CARACTERE
-                      | CHAINE CROCHET_OUVRANT CSTE_ENTIERE CROCHET_FERMANT
+                      | CHAINE CROCHET_OUVRANT expression CROCHET_FERMANT
 ;
 
 declaration_variable  : VARIABLE IDF DEUX_POINTS nom_type
@@ -113,9 +114,18 @@ instruction           : affectation
                       | condition
                       | tant_que
                       | appel
+                      | LIRE PARENTHESE_OUVRANTE liste_variables PARENTHESE_FERMANTE
+                      | ECRIRE PARENTHESE_OUVRANTE format suite_ecriture PARENTHESE_FERMANTE
                       | VIDE
                       | RETOURNE resultat_retourne
 ;
+
+format                : CSTE_CHAINE
+;
+
+suite_ecriture        :
+                      | VIRGULE variable suite_ecriture
+		      ;
 
 resultat_retourne     :
                       | expression
@@ -124,8 +134,8 @@ resultat_retourne     :
 appel                 : IDF liste_arguments
 ;
 
-liste_arguments       :
-                      |  PARENTHESE_OUVRANTE liste_args PARENTHESE_FERMANTE
+liste_arguments       : PARENTHESE_OUVRANTE VIDE PARENTHESE_FERMANTE
+                      | PARENTHESE_OUVRANTE liste_args PARENTHESE_FERMANTE
 ;
 
 liste_args            : un_arg
@@ -135,119 +145,109 @@ liste_args            : un_arg
 un_arg                : expression
 ;
 
-condition             : SI expression_booleen
-                         ALORS liste_instructions
-                         SINON liste_instructions
+condition             : SI expression 
+                        ALORS liste_instructions
+                        SINON liste_instructions
+                      | SI expression
+                        ALORS liste_instructions
 ;
 
-tant_que              : TANT_QUE expression_booleen FAIRE liste_instructions
+tant_que              : TANT_QUE expression FAIRE liste_instructions 
 ;
 
 affectation           : variable OPAFF expression
 ;
 
-variable              : IDF
-                      | IDF CROCHET_OUVRANT liste_expressions_entiere CROCHET_FERMANT
-
-;
-
-//expression            : expression_arithmetique
-//                     | expression_booleen
-//; 
-
-liste_expressions_entiere       : expression_entiere
-                                | liste_expressions_entiere  VIRGULE expression_entiere
+liste_variables       : variable
+                      | liste_variables VIRGULE variable
 ;
 
 
-expression             : expression_chaine
-                       | expression_booleen
-			 //| expression_arithmetique
-                       
+variable              : IDF suite_variable_1
 ;
 
-expression_booleen     : expression_booleen OU expression_booleen_1
-                       | expression_booleen_1
+suite_variable_1      : CROCHET_OUVRANT liste_expression CROCHET_FERMANT suite_variable_2
+		      | suite_variable_2 
 ;
 
-expression_booleen_1   : expression_booleen_1 ET expression_booleen_2
-                       | expression_booleen_2
+suite_variable_2      :      
+                      | POINT variable 
 ;
 
-expression_booleen_2   : expression_booleen_2 EGALE  expression_booleen_3
-                       | expression_booleen_2 DIFF  expression_booleen_3
-                       | expression_booleen_3
+liste_expression      : expression 
+                      | liste_expression VIRGULE expression
+		      ;
+
+
+expression            : expression OU expression_1;
+                      | expression_1
+	              ;
+
+expression_1          : expression_1 ET expression_2  
+		      | expression_2
 ;
 
-expression_booleen_3   : expression_booleen_3 CHEVRON_INF EGALE expression_booleen_4
-                       | expression_booleen_3 CHEVRON_SUP EGALE  expression_booleen_4
-                       | expression_booleen_3 CHEVRON_INF expression_booleen_4
-                       | expression_booleen_3 CHEVRON_SUP  expression_booleen_4
-                       | expression_booleen_4
-;
-                     
-
-expression_booleen_4   : expression_booleen_4 NON expression_booleen_5
-                       | expression_booleen_5
+expression_2          : expression_2 operateur1 expression_3  
+		      | expression_3
 ;
 
-expression_booleen_5   : PARENTHESE_OUVRANTE expression_booleen PARENTHESE_FERMANTE
-                       | expression_arithmetique
-                       | CSTE_BOOL
-                       | IDF
+expression_3          : expression_3 operateur2 expression_4
+                      | CSTE_CHAINE
+                      | CSTE_CARACTERE
+                      | CSTE_BOOL
+		      | expression_4
 ;
 
-expression_arithmetique   : expression_entiere
-                          | expression_reel
+expression_4          : expression_4 operateur3 expression_5  
+		      | expression_5
 ;
 
-expression_entiere        : expression_entiere PLUS expression_entiere_1  
-                          | expression_entiere MOINS expression_entiere_1
-		          | expression_entiere_1
+expression_5          : expression_5 operateur4 expression_6  
+		      | expression_6
 ;
 
-expression_entiere_1      : expression_entiere_1 MULT expression_entiere_2
-                          | expression_entiere_1 DIV expression_entiere_2
-                          | expression_entiere_2
-;
-expression_entiere_2      : expression_entiere_2 INCREMENT
-                          | expression_entiere_2 DECREMENT
-                          | expression_entiere_3 
- ;
-
-expression_entiere_3      : CSTE_ENTIERE
-	   	        
-		          
+expression_6          : CSTE_ENTIERE
+                      | CSTE_REEL
+		      | PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
+                      | variable // Cause trois conflits decalage reduction , notamment un avec appel .On ne sait pas d'ou proviennent les deux autres
+                      | appel //Cause un conflit decalage/réduction avec variable ici                     
+	                // | IDF operateur_unaire
 ;
 
-expression_reel           : expression_reel PLUS expression_reel_1  
-                          | expression_reel MOINS expression_reel_1
-		          | expression_reel_1
+operateur1             : EGALE
+                       | DIFF
 ;
 
-expression_reel_1         : expression_reel_1 MULT expression_reel_2
-                          | expression_reel_1 DIV expression_reel_2
-                          | expression_reel_2
-;
-expression_reel_2         : expression_reel_2 INCREMENT
-                          | expression_reel_2 DECREMENT
-                          | expression_reel_3 
- ;
-
-expression_reel_3         : //CSTE_ENTIERE
-		          CSTE_REEL			 
-			  // | IDF
-			  //  | PARENTHESE_OUVRANTE expression_reel PARENTHESE_FERMANTE  
+operateur2             : CHEVRON_INF_EGALE
+                       | CHEVRON_SUP_EGALE
+                       | CHEVRON_INF
+                       | CHEVRON_SUP
 ;
 
-expression_chaine         : expression_chaine PLUS chaine
+operateur3             : PLUS
+                       | MOINS
+;
+
+operateur4             : MULT
+                       | DIV
+                       | MODULO
+;
+
+/*expression_unaire         :// decrement et increment prefixer possible mais... a voir
+                           IDF INCREMENT
+                          | IDF DECREMENT
+                          | NON expression
+			  ;*/
+
+
+/*expression_chaine         : expression_chaine PLUS chaine
                           | chaine
 ;
 
 chaine                    : CSTE_CHAINE
-			    // | IDF
+			  | IDF
 ;
-
+*/
 %%
 
 
