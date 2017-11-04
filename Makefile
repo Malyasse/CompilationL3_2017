@@ -4,12 +4,12 @@ CC=gcc
 all: compilateur_CPYRR clean
 
 compilateur_CPYRR: y.tab.c lex.yy.o table_lexicographique.o
-	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o -ly -ll
+	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o -ly -ll -lm
 
 y.tab.c:
 	yacc  -v -d grammaire_CPYRR.y -Wconflicts-rr
 
-lex.yy.o: lex.yy.c
+lex.yy.o: lex.yy.c 
 	$(CC) -Wall -c lex.yy.c
 
 table_lexicographique.o:  table_lexicographique.c  table_lexicographique.h

@@ -1,20 +1,20 @@
 #ifndef TAB_LEX_H
 #define TAB_LEX_H
 
-#define TAILLE_TAB_LEXICO 500     /* nombre de lexemes pouvant etre inserer dans la table */
-#define TAILLE_TAB_HASH_CODE 32
+#define TAILLE_TAB_LEXICO 2000     /* nombre de lexemes pouvant etre inserer dans la table */
+#define TAILLE_TAB_HASH_CODE 100
 
-typedef struct{
+struct tab_lexico{
     int* longueur;   /* tableau contenant les longueurs de chaque lexeme */
     char** lexeme;     /* tableau de chaine contenant chaque lexeme */
     int* suivant;    /* tableau contenant l'indice du lexeme suivant de meme hashcode de chaque lexeme */
     int dernier;       /* indice du dernier lexeme inserer */
-} tab_lexico;
+};
 
-
+typedef struct tab_lexico tab_lexico;
 
 /********************************
-Fonction :tab_lexico initialisation_tab_lex(int taille)
+Fonction :tab_lexico initialisation_tab_lex(int taille, tab_lexico* tab_lex)
 Auteur :Carreteros Laetitia
 
 ********************************/
@@ -27,6 +27,14 @@ Auteur : Duraj Bastien
 
 ********************************/
 int fonction_hashcode(char* lexeme);
+
+
+/********************************
+Fonction : void init_hashcode(int* table_hashcode)
+Auteur : Duraj Bastien
+
+********************************/
+void init_hashcode(int* table_hashcode);
 
 
 /********************************
@@ -89,7 +97,7 @@ Auteur :Duraj Bastien
 ** entier : renvoie l'indice ou a ete inserer le lexeme
 
 ********************************/
-int insere_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_TAB_HASH_CODE]);
+int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_TAB_HASH_CODE]);
 
 
 /********************************
@@ -105,6 +113,29 @@ Auteur: Duraj Bastien
 
 ********************************/
 char* lexeme(int numero_lexico, tab_lexico tab_lex);
+
+
+/********************************
+Fonction: void afficher_table_lexicographique(tab_lexico tab_lex, int taille) : permet d'afficher la table lexicographique sous forme de tableau dans le terminal
+Auteur: Duraj Bastien
+
+*input
+**  tab_lexico tab_lex : table lexicographique a afficher
+**  entier taille : taille de la table lexicographique utilise
+
+********************************/
+void afficher_table_lexicographique(tab_lexico* tab_lex, int taille);
+
+
+/********************************
+Fonction: void afficher_table_hashcode(int* hashcode) : permet d'afficher la table de hashcode sous forme de tableau dans le terminal
+Auteur: Duraj Bastien
+
+*input
+**  int* hascode : table de hashcode a afficher
+
+********************************/
+void afficher_table_hashcode(int* hashcode);
 
 
 
