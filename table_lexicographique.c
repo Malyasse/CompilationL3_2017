@@ -20,7 +20,6 @@ void init_hashcode(int* table_hashcode){
     
     for (i = 0; i < TAILLE_TAB_HASH_CODE; i++){
         table_hashcode[i] = -1;
-    
     }
 
 
@@ -35,7 +34,6 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
    int numero_hash_code = fonction_hashcode(lexeme);   /* recupere le numero du hashcode du lexeme a inserer */
    
    premier = tab_hash_code[numero_hash_code];   /* recupere le premier lexeme de meme hashcode que le lexeme a inserer*/
-   //fprintf(stdout, "premier = %d\n", premier);
    if (premier == -1){   /* si premier n'existe pas alors on definie le lexeme a inserer comme etant premier*/
    
        indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);  /* ajoute le lexeme a la suite des autres lexemes dans le tableau */
@@ -54,8 +52,6 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
    
    indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */
    definir_lexeme_suivant(indice_nouveau_lexeme, precedent, tab_lex);   /* changer le champ suivant du lexeme precedent */
-   
-   //fprintf(stdout, "nouveau suivant = %d\n", tab_lex->suivant[precedent]);
    
    return indice_nouveau_lexeme;   /* retourner l'indice */
 
@@ -130,13 +126,19 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
    int j;
    int decalage;
    int n1, n2, n3;
+   int f_hashcode;
    
    
    fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
    fprintf(stdout, "|   indice   |   longueur   |  suivant  |                                            lexeme                                                 |\n");
    fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
    
-   for (i=0; i<taille; i++){
+   for (i=0; i<taille; i++){ 
+   
+       if (tab_lex->lexeme[i] != NULL)
+           f_hashcode = fonction_hashcode(tab_lex->lexeme[i]);
+       else
+           f_hashcode = 0;
    
        if (i != 0)
            n1 = 11 - (int) (log10(i)+1);
@@ -156,9 +158,9 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
            n3 = 10 - 1;
    
        if (tab_lex->lexeme[i] == NULL){
-           decalage = 92;
+           decalage = 88;
        }else{
-           decalage = 98 - tab_lex->longueur[i];
+           decalage = 94 - tab_lex->longueur[i] - ((int) log(f_hashcode));
        }
 
        fprintf(stdout, "| %d", i);
@@ -179,7 +181,7 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
            fprintf(stdout, " ");
        }
        
-       fprintf(stdout, "| %s", tab_lex->lexeme[i]);
+       fprintf(stdout, "| %s (%d)", tab_lex->lexeme[i], f_hashcode);
        
        for (j = 0; j < decalage; j++){
            fprintf(stdout, " ");

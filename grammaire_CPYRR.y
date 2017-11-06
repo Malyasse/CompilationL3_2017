@@ -15,7 +15,7 @@
 
 %token IDF 
 
-%token POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE 
+%token POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE  POINT_POINT
 
 %token  OPAFF PLUS MOINS MULT DIV MODULO CHEVRON_INF_EGALE CHEVRON_SUP_EGALE CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT LIRE ECRIRE
 
@@ -69,7 +69,7 @@ liste_dimensions      : une_dimension
                       | liste_dimensions VIRGULE une_dimension
 ;
 
-une_dimension         : expression POINT POINT expression 
+une_dimension         : expression POINT_POINT expression 
 ;
 
 liste_champs          : un_champ POINT_VIRGULE
@@ -163,16 +163,16 @@ liste_variables       : variable
 ;
 
 
-variable              : IDF suite_variable_1
-;
+variable              :  IDF
+                      | IDF CROCHET_OUVRANT liste_expression CROCHET_FERMANT suite_variable1
+                      | IDF POINT variable
+                      ;
 
-suite_variable_1      : CROCHET_OUVRANT liste_expression CROCHET_FERMANT suite_variable_2
-		      | suite_variable_2 
-;
 
-suite_variable_2      :      
+suite_variable1       :  
                       | POINT variable 
-;
+;  
+
 
 liste_expression      : expression 
                       | liste_expression VIRGULE expression
@@ -209,8 +209,8 @@ expression_5          : expression_5 operateur4 expression_6
 expression_6          : CSTE_ENTIERE
                       | CSTE_REEL
 		      | PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
-                      | variable // Cause trois conflits decalage reduction , notamment un avec appel .On ne sait pas d'ou proviennent les deux autres
-                      | appel //Cause un conflit decalage/réduction avec variable ici                     
+                      | variable
+                      | appel
 	                // | IDF operateur_unaire
 ;
 
