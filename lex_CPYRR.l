@@ -6,6 +6,7 @@
   #include "table_lexicographique.h"
   
   
+  
   int i;
   int nb_ligne = 1;
   int caractere = 0;

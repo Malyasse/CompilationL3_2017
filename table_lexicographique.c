@@ -42,12 +42,14 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
        return indice_nouveau_lexeme;   /* retourne l'indice du lexeme */
    }
    
-   suivant = indice_lexeme_suivant(premier, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
+   suivant = premier;
    
-   while (suivant != -1){    /* on change le suivant et on redefinie le predecent tant qu'il existe un lexeme de meme hashcode */
+   do{
        precedent = suivant;
-       suivant = indice_lexeme_suivant(precedent, tab_lex);
-   }
+       suivant = indice_lexeme_suivant(precedent, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
+       fprintf(stderr,"test\n");
+   }while (suivant != -1);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
+      
    
    
    indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */

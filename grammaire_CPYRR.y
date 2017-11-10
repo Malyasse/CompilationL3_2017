@@ -2,6 +2,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "arbre.h"
 
     extern char* yytext;
     extern int nb_ligne;
@@ -29,24 +30,24 @@
 
 
 %%
-programme             : PROG corps
+programme             : PROG corps {$$=$2;}
 ;
 
-corps                 : VIDE
-                      | liste_declarations liste_instructions
-                      | liste_instructions
+corps                 : VIDE {;}
+| liste_declarations liste_instructions {;}
+| liste_instructions {;}
 ;
 
 liste_declarations    : declaration POINT_VIRGULE
                       | liste_declarations declaration POINT_VIRGULE
 ;
 
-liste_instructions    : DEBUT suite_liste_inst FIN
+liste_instructions    : DEBUT suite_liste_inst FIN {;}
 ;
 
-suite_liste_inst      : VIDE
-                      | instruction POINT_VIRGULE
-                      | suite_liste_inst instruction POINT_VIRGULE
+suite_liste_inst      : VIDE {;}
+                      | instruction POINT_VIRGULE {;}
+                      | suite_liste_inst instruction POINT_VIRGULE {; }
 ;
 
 declaration           : declaration_type
