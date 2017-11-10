@@ -4,7 +4,7 @@
   
   #include "y.tab.h"
   #include "table_lexicographique.h"
-  
+  #include "table_declaration.h"
   
   int i;
   int nb_ligne = 1;
@@ -49,7 +49,6 @@ Cpyrr {caractere += yyleng; init_hashcode(table_hashcode); initialisation_tab_le
 type {caractere += yyleng; return (TYPE);}
 fstruct {caractere += yyleng;   return (FSTRUCT);}
 struct {caractere += yyleng;   return (STRUCT);}
-true|false {caractere += yyleng;  return (CSTE_BOOL);}
 and {caractere += yyleng;   return (ET);} 
 do {caractere += yyleng;    return (FAIRE);}
 while {caractere += yyleng; return (TANT_QUE);}
@@ -58,13 +57,13 @@ then {caractere += yyleng;  return (ALORS);}
 else {caractere += yyleng;  return (SINON);}
 or {caractere += yyleng;    return (OU);}
 not {caractere += yyleng;   return (NON);}
-int {caractere += yyleng;   return (ENTIER);}
-double {caractere += yyleng;  return (REEL);}
-bool {caractere += yyleng; return (BOOLEEN);}
-char {caractere += yyleng;  return (CARACTERE);}
-string {caractere += yyleng;  return (CHAINE);}
-procedure {caractere += yyleng;  return (PROCEDURE);}
-function {caractere += yyleng;  return (FONCTION);}
+int {caractere += yyleng; yylval=TYPE_B; return (ENTIER);}
+double {caractere += yyleng; yylval=TYPE_B; return (REEL);}
+bool {caractere += yyleng; yylval=TYPE_B; return (BOOLEEN);}
+char {caractere += yyleng; yylval=TYPE_B;  return (CARACTERE);}
+string {caractere += yyleng; yylval=TYPE_B;  return (CHAINE);}
+procedure {caractere += yyleng; yylval=PROC;  return (PROCEDURE);}
+function {caractere += yyleng; yylval=FUN;  return (FONCTION);}
 return {caractere += yyleng;  return (RETOURNE);}
 var {caractere += yyleng;  return (VARIABLE);}
 of  {caractere += yyleng;  return (DE);}
@@ -72,14 +71,17 @@ array {caractere += yyleng; return (TABLEAU);}
 void {caractere += yyleng; return (VIDE);}
 read {caractere += yyleng; return (LIRE);}
 write {caractere += yyleng; return (ECRIRE);}
-\'[^']\' {caractere += yyleng;  return (CSTE_CARACTERE);}
-\"[^"]*\" {caractere += yyleng; return (CSTE_CHAINE);}
+true|false {caractere += yyleng; yylval=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_BOOL);}
+\'[^']\' {caractere += yyleng; yylval=yytext[0]; return (CSTE_CARACTERE);}
+\"[^"]*\" {caractere += yyleng; yylval=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
 [a-z_][a-zA-Z0-9_]* {caractere += yyleng; yylval=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (IDF);}
 0|[1-9][0-9]* {caractere += yyleng; yylval=atoi(yytext); return (CSTE_ENTIERE);}
-0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; yylval=atof(yytext);return (CSTE_REEL);}
+0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; yylval=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_REEL);}
 . { ;}
 %%
+
+
 
 int yywrap(){
 
