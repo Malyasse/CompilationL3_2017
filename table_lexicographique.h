@@ -1,8 +1,7 @@
 #ifndef TAB_LEX_H
 #define TAB_LEX_H
 
-#define TAILLE_TAB_LEXICO 2000     /* nombre de lexemes pouvant etre inserer dans la table */
-#define TAILLE_TAB_HASH_CODE 100
+#include "define.h"
 
 struct tab_lexico{
     int* longueur;   /* tableau contenant les longueurs de chaque lexeme */
@@ -14,7 +13,7 @@ struct tab_lexico{
 typedef struct tab_lexico tab_lexico;
 
 /********************************
-Fonction :tab_lexico initialisation_tab_lex(int taille, tab_lexico* tab_lex)
+Fonction :void initialisation_tab_lex(int taille, tab_lexico* tab_lex)
 Auteur :Carreteros Laetitia
 
 ********************************/
