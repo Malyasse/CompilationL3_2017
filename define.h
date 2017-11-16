@@ -15,6 +15,9 @@
 #define VAR 4
 #define PROC 5
 #define FUN 6
+#define T_LIST 7
+#define T_AFFECT 8
+#define T_VIDE 9
 
 
 #endif

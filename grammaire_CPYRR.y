@@ -8,7 +8,7 @@
 #include "table_declaration.h"
 
     int region = 0;
-    arbre arbre_instruction = arbre_vide();
+    arbre arbre_instruction;
     
     extern char* yytext;
     extern int nb_ligne;
@@ -22,19 +22,20 @@
     %}
 
 
-%token IDF 
+%token <int> IDF 
 
-%token POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE  POINT_POINT
+%token <int> POINT_VIRGULE DEUX_POINTS CROCHET_OUVRANT CROCHET_FERMANT VIRGULE POINT PARENTHESE_OUVRANTE PARENTHESE_FERMANTE  POINT_POINT
 
-%token  OPAFF PLUS MOINS MULT DIV MODULO CHEVRON_INF_EGALE CHEVRON_SUP_EGALE CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT LIRE ECRIRE
+%token <int>  OPAFF PLUS MOINS MULT DIV MODULO CHEVRON_INF_EGALE CHEVRON_SUP_EGALE CHEVRON_INF CHEVRON_SUP ET OU NON EGALE DIFF INCREMENT DECREMENT LIRE ECRIRE
 
-%token CSTE_REEL CSTE_ENTIERE CSTE_BOOL CSTE_CHAINE CSTE_CARACTERE
+%token <int> CSTE_REEL CSTE_ENTIERE CSTE_BOOL CSTE_CHAINE CSTE_CARACTERE
 
-%token ENTIER REEL BOOLEEN CARACTERE CHAINE 
+%token <int> ENTIER REEL BOOLEEN CARACTERE CHAINE 
 
-%token VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE SI ALORS SINON FAIRE STRUCT FSTRUCT  DEBUT FIN PROG TABLEAU DE TYPE
+%token <int> VARIABLE PROCEDURE FONCTION RETOURNE VIDE TANT_QUE SI ALORS SINON FAIRE STRUCT FSTRUCT  DEBUT FIN PROG TABLEAU DE TYPE
 
 
+%type <arbre> suite_liste_inst instruction liste_instructions
 
 
 %%
@@ -50,12 +51,12 @@ liste_declarations    : declaration POINT_VIRGULE
                       | liste_declarations declaration POINT_VIRGULE
 ;
 
-liste_instructions    : DEBUT suite_liste_inst FIN {region ++;}
+liste_instructions    : DEBUT suite_liste_inst FIN {arbre_instruction = concat_pere_fils(creer_noeud(T_LIST, region), $2); region ++;}
 ;
 
-suite_liste_inst      : VIDE {;}
-                      | instruction POINT_VIRGULE {;}
-                      | suite_liste_inst instruction POINT_VIRGULE {;}
+suite_liste_inst      : VIDE {$$ = arbre_vide();}
+                      | instruction POINT_VIRGULE {$$ = creer_noeud(T_INSTR, 0);}
+                      | suite_liste_inst instruction POINT_VIRGULE {$$ = creer_noeud(T_INSTR, 0);}
 ;
 
 declaration           : declaration_type
