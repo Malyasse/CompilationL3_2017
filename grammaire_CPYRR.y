@@ -8,6 +8,7 @@
 #include "table_declaration.h"
 
     int region = 0;
+    arbre arbre_instruction = arbre_vide();
     
     extern char* yytext;
     extern int nb_ligne;
@@ -270,6 +271,7 @@ int main(){
     
     afficher_table_hashcode(table_hashcode);
     afficher_table_lexicographique(&tab_lex, 100);
+    afficher_arbre_horizontal(arbre_instruction, 6, 0, stdout);
     
     exit(0);
 

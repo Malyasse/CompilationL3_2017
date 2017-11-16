@@ -2,7 +2,7 @@
 #define ARBRE_H
 
 
- typedef struct struct_arbre{/*Carreteros Laetitia*/
+ typedef struct struct_arbre{   /*Carreteros Laetitia*/
     int type_noeud;
     int num_lexico;
     struct struct_arbre *frere;
@@ -40,4 +40,7 @@ arbre concat_pere_fils(arbre arbre_pere,arbre arbre_fils);
 
 void afficher_arbre_bis(arbre a,int i);
 void afficher_arbre(arbre a);
+
+void afficher_arbre_horizontal(arbre a, int max_prof, int cacher, FILE* mon_flux);
+
 #endif
