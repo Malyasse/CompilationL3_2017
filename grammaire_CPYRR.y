@@ -8,7 +8,7 @@
 #include "table_declaration.h"
 
     int region = 0;
-    arbre arbre_instruction = arbre_vide();
+    arbre arbre_instruction ;
     
     extern char* yytext;
     extern int nb_ligne;

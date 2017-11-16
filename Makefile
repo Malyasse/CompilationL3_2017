@@ -18,6 +18,8 @@ table_lexicographique.o:  table_lexicographique.c  table_lexicographique.h
 table_declaration.o:  table_declaration.c  table_declaration.h
 	$(CC) -Wall -c table_declaration.c
 
+table_region: arbre.o mon_allocation.o table_region.c table_region.h
+	$(CC) -Wall mon_allocation.o arbre.o table_region.c -o tab_reg -lm
 lex.yy.c:
 	lex lex_CPYRR.l
 
