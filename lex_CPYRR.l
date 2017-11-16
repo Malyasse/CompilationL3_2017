@@ -14,18 +14,6 @@
   int table_hashcode[TAILLE_TAB_HASH_CODE];
   tab_lexico tab_lex;
   
-  %union{
-       typedef struct struct_arbre{
-            int type_noeud;
-            int num_lexico;
-            struct struct_arbre *frere;
-            struct struct_arbre *fils;
-       }* type1;
-       
-       
-       int type2;
-  }
-  
 %}
 
 
