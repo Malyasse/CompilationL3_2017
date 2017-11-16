@@ -4,7 +4,7 @@ CC=gcc
 all: compilateur_CPYRR clean
 
 compilateur_CPYRR: y.tab.c lex.yy.o table_lexicographique.o table_declaration.o arbre.o mon_allocation.o
-	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o table_declaration.o arbre.o mon_allocation.o -ly -ll -lms
+	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o table_declaration.o arbre.o mon_allocation.o -ly -ll -lm
 
 y.tab.c:
 	yacc  -v -d grammaire_CPYRR.y -Wconflicts-rr
