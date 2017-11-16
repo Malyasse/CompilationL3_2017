@@ -4,6 +4,8 @@
 #include "arbre.h"
 
 
+
+
 int est_vide(arbre a){/*Carreteros Laetitia*/
   if(a==NULL){
     return 1;
@@ -11,10 +13,12 @@ int est_vide(arbre a){/*Carreteros Laetitia*/
   return 0;
 }
 
+
 arbre arbre_vide(){/*Carreteros Laetitia*/
   return NULL;
 
 }
+
 
 arbre creer_noeud(int nouveau_type_noeud,int num_lexico){/*Carreteros Laetitia*/
   arbre nouveau_arbre=allocation_memoire(1,(sizeof(type_arbre)));
@@ -25,16 +29,19 @@ arbre creer_noeud(int nouveau_type_noeud,int num_lexico){/*Carreteros Laetitia*/
   return nouveau_arbre;
  }
 
+
 arbre concat_pere_frere(arbre arbre_pere,arbre arbre_frere){/*Carreteros Laetitia*/
   arbre_pere->frere=arbre_frere;
   return arbre_pere;
 }
+
 
 arbre concat_pere_fils(arbre arbre_pere,arbre arbre_fils){/*Carreteros Laetitia*/
   arbre_pere->fils=arbre_fils;
   return arbre_pere;
 
 }
+
   void afficher_arbre_bis(arbre a,int i){/*Carreteros Laetitia*/
   int j=0;
   while(j!=i){
@@ -79,11 +86,12 @@ arbre concat_pere_fils(arbre arbre_pere,arbre arbre_fils){/*Carreteros Laetitia*
 
 }
 
+
 void afficher_arbre(arbre a){/*Carreteros Laetitia*/
 
   int i=0;
   afficher_arbre_bis( a, i);
    
 }
-int main(){
-}
+
+

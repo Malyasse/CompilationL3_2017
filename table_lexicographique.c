@@ -47,7 +47,6 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
    do{
        precedent = suivant;
        suivant = indice_lexeme_suivant(precedent, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
-       fprintf(stderr,"test\n");
    }while (suivant != -1);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
       
    
@@ -128,7 +127,6 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
    int j;
    int decalage;
    int n1, n2, n3;
-   int f_hashcode;
    
    
    fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
@@ -136,11 +134,6 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
    fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
    
    for (i=0; i<taille; i++){ 
-   
-       if (tab_lex->lexeme[i] != NULL)
-           f_hashcode = fonction_hashcode(tab_lex->lexeme[i]);
-       else
-           f_hashcode = 0;
    
        if (i != 0)
            n1 = 11 - (int) (log10(i)+1);
@@ -160,9 +153,9 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
            n3 = 10 - 1;
    
        if (tab_lex->lexeme[i] == NULL){
-           decalage = 88;
+           decalage = 92;
        }else{
-           decalage = 94 - tab_lex->longueur[i] - ((int) log(f_hashcode));
+           decalage = 98 - tab_lex->longueur[i];
        }
 
        fprintf(stdout, "| %d", i);
@@ -183,7 +176,7 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
            fprintf(stdout, " ");
        }
        
-       fprintf(stdout, "| %s (%d)", tab_lex->lexeme[i], f_hashcode);
+       fprintf(stdout, "| %s", tab_lex->lexeme[i]);
        
        for (j = 0; j < decalage; j++){
            fprintf(stdout, " ");
