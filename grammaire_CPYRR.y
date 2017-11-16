@@ -2,11 +2,19 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "arbre.h"
 
+#include "arbre.h"
+#include "table_lexicographique.h"
+#include "table_declaration.h"
+
+    int region = 0;
+    arbre arbre_instruction = arbre_vide();
+    
     extern char* yytext;
     extern int nb_ligne;
     extern int caractere;
+    extern int table_hashcode[TAILLE_TAB_HASH_CODE];
+    extern tab_lexico tab_lex;
 
     int yylex();
     int yyerror();
@@ -30,7 +38,7 @@
 
 
 %%
-programme             : PROG corps {$$=$2;}
+programme             : PROG corps {;}
 ;
 
 corps                 : VIDE {;}
@@ -42,12 +50,12 @@ liste_declarations    : declaration POINT_VIRGULE
                       | liste_declarations declaration POINT_VIRGULE
 ;
 
-liste_instructions    : DEBUT suite_liste_inst FIN {;}
+liste_instructions    : DEBUT suite_liste_inst FIN {region ++;}
 ;
 
 suite_liste_inst      : VIDE {;}
                       | instruction POINT_VIRGULE {;}
-                      | suite_liste_inst instruction POINT_VIRGULE {; }
+                      | suite_liste_inst instruction POINT_VIRGULE {;}
 ;
 
 declaration           : declaration_type
@@ -251,6 +259,23 @@ chaine                    : CSTE_CHAINE
 */
 %%
 
+
+
+int main(){
+
+    init_hashcode(table_hashcode); 
+    initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex);  
+    
+    yyparse();
+    
+    
+    afficher_table_hashcode(table_hashcode);
+    afficher_table_lexicographique(&tab_lex, 100);
+    afficher_arbre_horizontal(arbre_instruction, 6, 0, stdout);
+    
+    exit(0);
+
+}
 
 
 int yyerror(){
