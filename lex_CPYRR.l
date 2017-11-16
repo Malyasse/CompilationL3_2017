@@ -46,7 +46,7 @@
 \} {caractere += yyleng;    return (FIN);}
 \:\= {caractere += yyleng;  return (OPAFF);}
 \%  {caractere += yyleng;   return (MODULO);}
-Cpyrr {caractere += yyleng; init_hashcode(table_hashcode); initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex);   return (PROG);}
+Cpyrr {caractere += yyleng; init_hashcode(table_hashcode); initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex); return (PROG);}
 type {caractere += yyleng; return (TYPE);}
 fstruct {caractere += yyleng;   return (FSTRUCT);}
 struct {caractere += yyleng;   return (STRUCT);}
