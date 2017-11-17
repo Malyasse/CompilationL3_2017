@@ -6,8 +6,11 @@
 #include "arbre.h"
 #include "table_lexicographique.h"
 #include "table_declaration.h"
+#include "table_region.h"
+#include "pile.h"
 
     int region = 0;
+    int decalage=0;
     arbre arbre_instruction ;
     
     extern char* yytext;
@@ -15,7 +18,8 @@
     extern int caractere;
     extern int table_hashcode[TAILLE_TAB_HASH_CODE];
     extern tab_lexico tab_lex;
-
+    tab_region tab_reg;
+	Pile pile;
     int yylex();
     int yyerror();
    
@@ -264,7 +268,8 @@ chaine                    : CSTE_CHAINE
 int main(){
 
     init_hashcode(table_hashcode); 
-    initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex);  
+    initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex); 
+    initialisation_table_region(&tab_reg);
     
     yyparse();
     

@@ -14,7 +14,7 @@ void initialisation_table_region(tab_region* table_reg){
   table_reg->courant=0;
   while(i<TAILLE_TABLE_REGION){
     
-    table_reg->taille[i] = 1;
+    table_reg->taille[i] = 0;
     table_reg->nis[i] = 0;
     table_reg->p_arbre[i] = arbre_vide();
     i++;
@@ -25,27 +25,30 @@ void initialisation_table_region(tab_region* table_reg){
 void ajouter_region(int taille,int nis,arbre p_arbre,tab_region* tab_reg){
   
   if(tab_reg->courant<TAILLE_TABLE_REGION){
-     tab_reg->courant+=1;
+   
     tab_reg->taille[tab_reg->courant] = taille;
     tab_reg->nis[tab_reg->courant] = nis;
     tab_reg->p_arbre[tab_reg->courant] = p_arbre;
-  
+    tab_reg->courant+=1;
   }
 }
 
 void afficher_table_region(tab_region *tab_reg){
-  int j,i=0;
-  int decalage=0;
-  int taille;
+ int i=0;
+ // int decalage=0;
+  //int taille;
   fprintf(stdout, "|------------|--------------|-----------|\n");
   fprintf(stdout, "|   taille   |      NIS     |   arbre   |\n");
   fprintf(stdout, "|------------|--------------|-----------|\n");
  
   while (i<TAILLE_TABLE_REGION && i< tab_reg->courant){
+   fprintf(stderr,"|     %d      |       %d      |   %p  |\n", tab_reg->taille[i],tab_reg->nis[i] , tab_reg->p_arbre[i]);
+   i++;
+   }
     /*Affichage taille*/
-     fprintf(stdout,"|");
+     //fprintf(stdout,"|");
      //taille=(int)log10(tab_reg->taille[i])+1;
-      taille=1;
+     /* taille=1;
     decalage=12/(taille/2);
     for(j=0;j<decalage;j++){
       fprintf(stdout," ");
@@ -54,11 +57,11 @@ void afficher_table_region(tab_region *tab_reg){
     for(j=0;j<12-decalage-1;j++){
       fprintf(stdout," ");
     }  
-    fprintf(stdout,"|");
+    fprintf(stdout,"|");*/
     /*Affichage nis*/
    
     //taille=(int)log10(tab_reg->nis[i])+1;
-   taille=1;
+ /*  taille=1;
     decalage=12/(taille/2);
     for(j=0;j<decalage;j++){
       fprintf(stdout," ");
@@ -68,9 +71,9 @@ void afficher_table_region(tab_region *tab_reg){
       fprintf(stdout," ");
     }  
    
-
+*/
     /*Affichage arbre*/
-    fprintf(stdout,"|");
+   /* fprintf(stdout,"|");
     if(est_vide(tab_reg->p_arbre[i])){
 
 	taille=4;
@@ -90,16 +93,6 @@ void afficher_table_region(tab_region *tab_reg){
        fprintf(stdout,"|\n");
     i++;
   }
-   fprintf(stdout, "|------------|--------------|-----------|\n");
+   fprintf(stdout, "|------------|--------------|-----------|\n");*/
 }
 
-int main(){
-
-  tab_region tab_reg;
-  arbre a=arbre_vide();arbre b=arbre_vide();
-  initialisation_table_region(&tab_reg);
-    ajouter_region( 1, 3,a,&tab_reg);
-  ajouter_region( 4, 2,b,&tab_reg);
-  afficher_table_region(&tab_reg);
-
-}
