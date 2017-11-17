@@ -2,6 +2,7 @@
   #include <stdio.h>
   #include <stdlib.h>
   
+  #include "arbre.h"
   #include "y.tab.h"
   #include "table_lexicographique.h"
   #include "table_declaration.h"
@@ -58,13 +59,13 @@ then {caractere += yyleng;  return (ALORS);}
 else {caractere += yyleng;  return (SINON);}
 or {caractere += yyleng;    return (OU);}
 not {caractere += yyleng;   return (NON);}
-int {caractere += yyleng; yylval.entier=TYPE_B; return (ENTIER);}
-double {caractere += yyleng; yylval.entier=TYPE_B; return (REEL);}
-bool {caractere += yyleng; yylval.entier=TYPE_B; return (BOOLEEN);}
-char {caractere += yyleng; yylval.entier=TYPE_B;  return (CARACTERE);}
-string {caractere += yyleng; yylval.entier=TYPE_B;  return (CHAINE);}
-procedure {caractere += yyleng; yylval.entier=PROC;  return (PROCEDURE);}
-function {caractere += yyleng; yylval.entier=FUN;  return (FONCTION);}
+int {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (ENTIER);}
+double {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (REEL);}
+bool {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (BOOLEEN);}
+char {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode);  return (CARACTERE);}
+string {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode);  return (CHAINE);}
+procedure {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode);return (PROCEDURE);}
+function {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode);  return (FONCTION);}
 return {caractere += yyleng;  return (RETOURNE);}
 var {caractere += yyleng;  return (VARIABLE);}
 of  {caractere += yyleng;  return (DE);}
@@ -72,13 +73,13 @@ array {caractere += yyleng; return (TABLEAU);}
 void {caractere += yyleng; return (VIDE);}
 read {caractere += yyleng; return (LIRE);}
 write {caractere += yyleng; return (ECRIRE);}
-true|false {caractere += yyleng; yylval.entier=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_BOOL);}
-\'[^']\' {caractere += yyleng; yylval.entier=yytext[0]; return (CSTE_CARACTERE);}
-\"[^"]*\" {caractere += yyleng; yylval.entier=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_CHAINE);}
+true|false {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_BOOL);}
+\'[^']\' {caractere += yyleng; yylval.type2=yytext[0]; return (CSTE_CARACTERE);}
+\"[^"]*\" {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
-[a-z_][a-zA-Z0-9_]* {caractere += yyleng; yylval.entier=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (IDF);}
-0|[1-9][0-9]* {caractere += yyleng; yylval.entier=atoi(yytext); return (CSTE_ENTIERE);}
-0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; yylval.entier=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_REEL);}
+[a-z_][a-zA-Z0-9_]* {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (IDF);}
+0|[1-9][0-9]* {caractere += yyleng; yylval.type2=atoi(yytext); return (CSTE_ENTIERE);}
+0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_REEL);}
 . { ;}
 %%
 

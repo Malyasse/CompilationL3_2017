@@ -47,15 +47,21 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
    do{
        precedent = suivant;
        suivant = indice_lexeme_suivant(precedent, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
-   }while (suivant != -1);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
+   }while (suivant != -1 && strcmp(lexeme, tab_lex->lexeme[precedent]) != 0);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
       
+      
+   if (suivant == -1){
+       if (strcmp(lexeme, tab_lex->lexeme[suivant]) == 0)
+           return suivant;
+       else{
+           indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */
+           definir_lexeme_suivant(indice_nouveau_lexeme, precedent, tab_lex);   /* changer le champ suivant du lexeme precedent */
    
+           return indice_nouveau_lexeme;   /* retourner l'indice */
+       }
+   }else
+       return precedent;
    
-   indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */
-   definir_lexeme_suivant(indice_nouveau_lexeme, precedent, tab_lex);   /* changer le champ suivant du lexeme precedent */
-   
-   return indice_nouveau_lexeme;   /* retourner l'indice */
-
 }
 
 

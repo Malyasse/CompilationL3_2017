@@ -24,22 +24,32 @@ arbre arbre_vide(){  /*Carreteros Laetitia*/
 
 arbre creer_noeud(int nouveau_type_noeud,int num_lexico){   /*Carreteros Laetitia*/
   arbre nouveau_arbre=allocation_memoire(1,(sizeof(type_arbre)));
-  nouveau_arbre->frere=NULL;
-  nouveau_arbre->fils=NULL;
+   
+  nouveau_arbre->frere=arbre_vide();
+  nouveau_arbre->fils=arbre_vide();
   nouveau_arbre->type_noeud=nouveau_type_noeud;
   nouveau_arbre->num_lexico=num_lexico;
+  
+   //fprintf(stderr,"T %d \n" , nouveau_arbre->type_noeud );
   return nouveau_arbre;
  }
 
 
 arbre concat_pere_frere(arbre arbre_pere,arbre arbre_frere){/*Carreteros Laetitia*/
-  arbre_pere->frere=arbre_frere;
+  
+  if(!est_vide(arbre_pere)){
+      arbre_pere->frere=arbre_frere;
+      //fprintf(stderr,"Test 5 %d  %d \n" , arbre_pere->type_noeud , arbre_frere->type_noeud);
+   }
   return arbre_pere;
 }
 
 
 arbre concat_pere_fils(arbre arbre_pere,arbre arbre_fils){/*Carreteros Laetitia*/
-  arbre_pere->fils=arbre_fils;
+  
+  if(!est_vide(arbre_pere)){
+      arbre_pere->fils=arbre_fils;
+  }
   return arbre_pere;
 
 }
