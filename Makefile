@@ -3,8 +3,8 @@ CC=gcc
 
 all: compilateur_CPYRR clean
 
-compilateur_CPYRR: y.tab.c lex.yy.o table_lexicographique.o table_declaration.o arbre.o mon_allocation.o
-	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o table_declaration.o arbre.o mon_allocation.o -ly -ll -lm
+compilateur_CPYRR: y.tab.c lex.yy.o table_lexicographique.o table_declaration.o table_region.o arbre.o mon_allocation.o
+	$(CC) -Wall -o compilateur_CPYRR y.tab.c lex.yy.o table_lexicographique.o table_declaration.o table_region.o arbre.o mon_allocation.o -ly -ll -lm
 
 y.tab.c:
 	yacc  -v -d grammaire_CPYRR.y -Wconflicts-rr
@@ -18,6 +18,8 @@ table_lexicographique.o:  table_lexicographique.c  table_lexicographique.h
 table_declaration.o:  table_declaration.c  table_declaration.h
 	$(CC) -Wall -c table_declaration.c
 
+table_region.o: table_region.c table_region.h
+	$(CC) -Wall -c table_region.c 
 lex.yy.c:
 	lex lex_CPYRR.l
 

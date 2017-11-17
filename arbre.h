@@ -10,6 +10,9 @@
   }type_arbre;
 
 typedef type_arbre* arbre;
+
+
+int est_vide(arbre a);
  /*******************
 Fonction :arbre  arbre_vide():Creer un arbre vide
 Auteur :Carreteros Laetitia

@@ -47,7 +47,9 @@
 \} {caractere += yyleng;    return (FIN);}
 \:\= {caractere += yyleng;  return (OPAFF);}
 \%  {caractere += yyleng;   return (MODULO);}
+
 Cpyrr {caractere += yyleng;  return (PROG);}
+
 type {caractere += yyleng; return (TYPE);}
 fstruct {caractere += yyleng;   return (FSTRUCT);}
 struct {caractere += yyleng;   return (STRUCT);}

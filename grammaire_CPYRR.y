@@ -2,22 +2,28 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-
     #include "arbre.h"
     #include "table_lexicographique.h"
     #include "table_declaration.h"
+    #include "table_region.h"
+    #include "pile.h"
 
+    int region = 0;
+    int decalage=0;
     arbre arbre_instruction;
+    table_declaration table_declar;
+    tab_region tab_reg;
+	Pile pile;
     
     extern char* yytext;
     extern int nb_ligne;
     extern int caractere;
     extern int table_hashcode[TAILLE_TAB_HASH_CODE];
     extern tab_lexico tab_lex;
-
+	
+	
     int yylex();
     int yyerror();
-    table_declaration table_declar;
     
    
     %}
@@ -275,9 +281,10 @@ chaine                    : CSTE_CHAINE
 
 int main(){
 
-    init_hashcode(table_hashcode); 
+    init_hashcode(table_hashcode);
     initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex);  
     initialisation_table_declaration(&table_declar);
+    initialisation_table_region(&tab_reg);
     arbre_instruction = arbre_vide();
     
     yyparse();
