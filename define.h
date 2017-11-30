@@ -9,6 +9,7 @@
 #define TAILLE_TABLE_DECLARATION 2000
 #define TAILLE_ZONE_DEBORDEMENT 500
 #define TAILLE_TABLE_REGION 300
+#define ARGUMENT_MAX 100
 
 #define TYPE_B 1
 #define TYPE_S 2
@@ -16,9 +17,7 @@
 #define VAR 4
 #define PROC 5
 #define FUN 6
-#define T_LIST 7
-#define T_AFFECT 8
-#define T_VIDE 9
+#define A_VIDE 9
 #define A_IDF 10
 #define A_ITE 11
 #define A_TANT_QUE 12
@@ -45,6 +44,10 @@
 #define A_LIRE 33
 #define A_ECRIRE 34
 #define A_RETOURNE 35
+#define A_LISTE 36
+#define A_INCREMENT 37
+#define A_NON 38
+#define A_DECREMENT 39
 
 
 

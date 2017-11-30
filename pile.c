@@ -12,7 +12,7 @@ free(*pt);
 }*/
 
 
-Pile* creer_pile_vide(){
+Pile creer_pile_vide(){
   return NULL;
 }
 
@@ -31,8 +31,12 @@ Pile empile(Pile p,int element){
 }
 
 Pile depile(Pile p){
-  Pile s=p->suivant;
-  /* libere_mem(&p);*/
+  Pile s = creer_pile_vide();
+
+  if (!est_pile_vide(p))
+    s = p->suivant;
+    /* libere_mem(&p);*/
+  
   return s;
 }
 

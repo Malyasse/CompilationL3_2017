@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+
 
 #include "table_declaration.h"
 
@@ -78,6 +81,212 @@ int recupere_type(table_declaration* table, int num_lex){    /*Duraj Bastien*/
 
 
 void afficher_table_declaration(table_declaration* table){   /*Duraj Bastien*/
+    int i = 0;
+    int j;
+    int taille;
+
+
+    fprintf(stdout, "Affichage de la table des declarations\n\n");
+    
+    fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+    fprintf(stdout, "|                                                     ZONE PRIMAIRE                                                                    |\n");
+    fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+    fprintf(stdout, "|     indice     |      Nature      |        Region        |        Description        |        Execution        |       Suivant       |\n");
+    fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+ 
+ 
+    while (i < TAILLE_TABLE_DECLARATION){   //table->dernier
+    
+       fprintf(stdout,"|        %d", i);
+       
+       if (i == 0){
+           taille = 1;
+       }else if (i > 0){
+           taille = (int) log10(i)+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 8-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|       %d", table->nature[i]);
+       
+       if (table->nature[i] == 0){
+           taille = 1;
+       }else if (table->nature[i] > 0){
+           taille = (int) log10(table->nature[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 11-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|          %d", table->region[i]);
+       
+       if (table->region[i] == 0){
+           taille = 1;
+       }else if (table->region[i] > 0){
+           taille = (int) log10(table->region[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 12-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|              %d", table->description[i]);
+       
+       if (table->description[i] == 0){
+           taille = 1;
+       }else if (table->description[i] > 0){
+           taille = (int) log10(table->description[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 13-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|             %d", table->execution[i]);
+       
+       if (table->execution[i] == 0){
+           taille = 1;
+       }else if (table->execution[i] > 0){
+           taille = (int) log10(table->execution[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 12-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|          %d", table->suivant[i]);
+       
+       if (table->suivant[i] == 0){
+           taille = 1;
+       }else if (table->suivant[i] > 0){
+           taille = (int) log10(table->suivant[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 11-taille; j++)
+           fprintf(stdout," ");
+    
+       fprintf(stdout,"|\n");
+       fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+       
+       
+       i++;
+    }
+    
+    
+    fprintf(stdout, "|                                                  ZONE DE DEBORDEMENT                                                                 |\n");
+    fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+
+
+    i = TAILLE_TABLE_DECLARATION;
+    while (i < table->dernier_debordement){       //TAILLE_TABLE_DECLARATION+TAILLE_ZONE_DEBORDEMENT
+    
+       fprintf(stdout,"|        %d", i);
+       
+       if (i == 0){
+           taille = 1;
+       }else if (i > 0){
+           taille = (int) log10(i)+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 8-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|       %d", table->nature[i]);
+       
+       if (table->nature[i] == 0){
+           taille = 1;
+       }else if (table->nature[i] > 0){
+           taille = (int) log10(table->nature[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 11-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|          %d", table->region[i]);
+       
+       if (table->region[i] == 0){
+           taille = 1;
+       }else if (table->region[i] > 0){
+           taille = (int) log10(table->region[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 12-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|              %d", table->description[i]);
+       
+       if (table->description[i] == 0){
+           taille = 1;
+       }else if (table->description[i] > 0){
+           taille = (int) log10(table->description[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 13-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|             %d", table->execution[i]);
+       
+       if (table->execution[i] == 0){
+           taille = 1;
+       }else if (table->execution[i] > 0){
+           taille = (int) log10(table->execution[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 12-taille; j++)
+           fprintf(stdout," ");
+           
+           
+       fprintf(stdout,"|          %d", table->suivant[i]);
+       
+       if (table->suivant[i] == 0){
+           taille = 1;
+       }else if (table->suivant[i] > 0){
+           taille = (int) log10(table->suivant[i])+1;
+       }else{
+           taille = 2;
+       }
+       
+       for (j=0; j < 11-taille; j++)
+           fprintf(stdout," ");
+    
+       fprintf(stdout,"|\n");
+       fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
+       
+       
+       i++;
+    }
+    
+    
+    fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n\n\n");
 
 
 }

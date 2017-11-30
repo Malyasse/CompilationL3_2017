@@ -11,7 +11,7 @@ typedef cellule_struct * Pile;
   fonction: Pile* creer_pile_vide();
   **Cree une pile vide
  */
-Pile* creer_pile_vide();
+Pile creer_pile_vide();
 
 /*
   fonction: int est_pile_vide(Pile p);

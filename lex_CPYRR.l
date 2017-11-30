@@ -79,7 +79,7 @@ true|false {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, t
 \'[^']\' {caractere += yyleng; yylval.type2=yytext[0]; return (CSTE_CARACTERE);}
 \"[^"]*\" {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_CHAINE);}
 \/\*([^\"\*]|\*+[^\"\*\/]|\*+\"[^\"]*\"|\"[^\"]*\")*\*+\/ { ;}
-[a-z_][a-zA-Z0-9_]* {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (IDF);}
+[a-z_][a-zA-Z0-9_]* { caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (IDF);}
 0|[1-9][0-9]* {caractere += yyleng; yylval.type2=atoi(yytext); return (CSTE_ENTIERE);}
 0|[1-9][0-9]*\.[0-9]+ {caractere += yyleng; yylval.type2=inserer_lexeme(yytext, &tab_lex, table_hashcode); return (CSTE_REEL);}
 . { ;}

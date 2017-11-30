@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "define.h"
+
+
 #include "arbre.h"
 #include "table_region.h"
 #include "mon_allocation.h"
 #include <math.h>
+
+
+
 
 
 void initialisation_table_region(tab_region* table_reg){
@@ -33,66 +37,104 @@ void ajouter_region(int taille,int nis,arbre p_arbre,tab_region* tab_reg){
   }
 }
 
-void afficher_table_region(tab_region *tab_reg){
- int i=0;
- // int decalage=0;
-  //int taille;
-  fprintf(stdout, "|------------|--------------|-----------|\n");
-  fprintf(stdout, "|   taille   |      NIS     |   arbre   |\n");
-  fprintf(stdout, "|------------|--------------|-----------|\n");
- 
-  while (i<TAILLE_TABLE_REGION && i< tab_reg->courant){
-   fprintf(stderr,"|     %d      |       %d      |   %p  |\n", tab_reg->taille[i],tab_reg->nis[i] , tab_reg->p_arbre[i]);
-   i++;
-   }
-    /*Affichage taille*/
-     //fprintf(stdout,"|");
-     //taille=(int)log10(tab_reg->taille[i])+1;
-     /* taille=1;
-    decalage=12/(taille/2);
-    for(j=0;j<decalage;j++){
-      fprintf(stdout," ");
-    }
-    fprintf(stdout,"%d",tab_reg->taille[i]);
-    for(j=0;j<12-decalage-1;j++){
-      fprintf(stdout," ");
-    }  
-    fprintf(stdout,"|");*/
-    /*Affichage nis*/
-   
-    //taille=(int)log10(tab_reg->nis[i])+1;
- /*  taille=1;
-    decalage=12/(taille/2);
-    for(j=0;j<decalage;j++){
-      fprintf(stdout," ");
-    }
-    fprintf(stdout,"%d",tab_reg->nis[i]);
-    for(j=0;j<12-decalage+1;j++){
-      fprintf(stdout," ");
-    }  
-   
-*/
-    /*Affichage arbre*/
-   /* fprintf(stdout,"|");
-    if(est_vide(tab_reg->p_arbre[i])){
 
-	taille=4;
-	  }
-      else{
-	taille=12;
-      }
-      decalage=12/(taille/2);
-      for(j=0;j<decalage;j++){
-	fprintf(stdout," ");
-      }
-      fprintf(stdout,"%p",tab_reg->p_arbre[i]);
-      for(j=0;j<taille-decalage;j++){
-	fprintf(stdout," ");
-	
-      }
-       fprintf(stdout,"|\n");
-    i++;
-  }
-   fprintf(stdout, "|------------|--------------|-----------|\n");*/
+void set_arbre_region(arbre a, tab_region *tab_region, int num_region){
+
+  tab_region->p_arbre[num_region] = a;
+
 }
+
+
+void set_taille_region(int taille, tab_region *tab_region, int num_region){
+
+  tab_region->taille[num_region] = taille;
+
+}
+
+
+void afficher_table_region(tab_region *tab_reg){
+    int i = 0;
+    int j;
+    int taille;
+
+
+
+    fprintf(stdout, "Affichage de la table des regions\n\n");
+    
+    
+    fprintf(stdout, "|------------|------------|-------------|-------------------|\n");
+    fprintf(stdout, "|   indice   |   taille   |     NIS     |       arbre       |\n");
+    fprintf(stdout, "|------------|------------|-------------|-------------------|\n");
+ 
+    while (i< tab_reg->courant){     //&& i<TAILLE_TABLE_REGION
+    
+        fprintf(stdout,"|     %d", i);
+       
+        if (i == 0){
+            taille = 1;
+        }else if (i > 0){
+            taille = (int) log10(i)+1;
+        }else{
+            taille = 2;
+        }
+       
+        for (j=0; j < 7-taille; j++)
+            fprintf(stdout," ");
+           
+           
+        fprintf(stdout,"|     %d", tab_reg->taille[i]);
+        
+        if (tab_reg->taille[i] == 0){
+            taille = 1;
+        }else if (tab_reg->taille[i] > 0){
+            taille = (int) log10(tab_reg->taille[i])+1;
+        }else{
+            taille = 2;
+        }
+       
+        for (j=0; j < 7-taille; j++)
+            fprintf(stdout," ");
+            
+           
+        fprintf(stdout,"|      %d", tab_reg->nis[i]);
+       
+        if (tab_reg->nis[i] == 0){
+            taille = 1;
+        }else if (tab_reg->nis[i] > 0){
+            taille = (int) log10(tab_reg->nis[i])+1;
+        }else{
+            taille = 2;
+        }
+       
+        for (j=0; j < 7-taille; j++)
+            fprintf(stdout," ");
+            
+           
+        fprintf(stdout,"|   %p", tab_reg->p_arbre[i]);
+       
+        if (tab_reg->p_arbre[i] == NULL){
+            taille = 5;
+        }else{
+            taille = (int) log10((long) tab_reg->p_arbre[i])+1;
+        }
+       
+        for (j=0; j < 16-taille; j++)
+            fprintf(stdout," ");
+            
+        fprintf(stdout,"|\n");
+        fprintf(stdout, "|------------|------------|-------------|-------------------|\n");
+        
+        
+        i++;
+    
+    }
+    
+    
+    fprintf(stdout, "|------------|------------|-------------|-------------------|\n\n\n");
+    
+    
+}
+
+
+
 

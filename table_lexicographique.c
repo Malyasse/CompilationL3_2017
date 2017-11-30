@@ -8,6 +8,45 @@
 
 
 
+
+
+int chainecmp(char* ch1, char* ch2){     // remplace strcmp qui ne fonctionne pas
+    int i = 0;
+
+    while (ch1[i] == '\0' && ch2[i] == '\0'){
+        
+        if (ch1[i] == ch2[i]){
+            i ++;
+            continue;
+        }
+        
+        if (ch1[i] < ch2[i]){
+            return -1;
+        }
+        
+        return 1;
+    
+    }
+
+
+    if (ch1[i] == '\0' && ch2[i] == '\0'){
+        return 0;
+    }
+    
+    if (ch1[i] == '\0'){
+        return -1;
+    }
+    
+    if (ch1[i] == '\0'){
+        return 1;
+    }
+
+
+    return -1;
+
+}
+
+
 int fonction_hashcode(char* lexeme){   /*Duraj Bastien*/   /* definir les criteres pour la table de hashcode et redefinir la fonction de hashcode */
 
     return strlen(lexeme);
@@ -47,20 +86,21 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
    do{
        precedent = suivant;
        suivant = indice_lexeme_suivant(precedent, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
-   }while (suivant != -1 && strcmp(lexeme, tab_lex->lexeme[precedent]) != 0);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
+   }while (suivant != -1 && chainecmp(lexeme, tab_lex->lexeme[precedent]) != 0);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
       
       
    if (suivant == -1){
-       if (strcmp(lexeme, tab_lex->lexeme[suivant]) == 0)
+       if (chainecmp(lexeme, tab_lex->lexeme[suivant]) == 0){
            return suivant;
-       else{
+       }else{
            indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */
            definir_lexeme_suivant(indice_nouveau_lexeme, precedent, tab_lex);   /* changer le champ suivant du lexeme precedent */
    
            return indice_nouveau_lexeme;   /* retourner l'indice */
        }
-   }else
+   }else{
        return precedent;
+   }
    
 }
 
@@ -123,7 +163,7 @@ int indice_lexeme_suivant(int numero_lex, tab_lexico* tab_lex){  /*Carreteros La
 
 void definir_lexeme_suivant(int indice_nouveau_lex, int num_lexeme, tab_lexico* tab_lex){   /*Carreteros Laetitia*/
     
-    tab_lex->suivant[num_lexeme] = indice_nouveau_lex; /*Change la valeur suivant d'un lexeme*/
+    tab_lex->suivant[num_lexeme] = indice_nouveau_lex;    /*Change la valeur suivant d'un lexeme*/
     
 }
 
@@ -134,6 +174,11 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
    int decalage;
    int n1, n2, n3;
    
+   if (taille == -1)
+      taille = tab_lex->dernier;
+
+
+   fprintf(stdout, "Affichage de la table lexicographique\n\n");
    
    fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
    fprintf(stdout, "|   indice   |   longueur   |  suivant  |                                            lexeme                                                 |\n");
@@ -193,7 +238,7 @@ void afficher_table_lexicographique(tab_lexico* tab_lex, int taille){
        fprintf(stdout, "|------------|--------------|-----------|---------------------------------------------------------------------------------------------------|\n");
    }
    
-   fprintf(stdout, "\n\n");
+   fprintf(stdout, "\n\n\n");
 
 }
 
@@ -202,6 +247,8 @@ void afficher_table_hashcode(int* hashcode){
     int i, j;
     int n1, n2;
 
+    fprintf(stdout, "Affichage de la table de hashage\n\n");
+    
     fprintf(stdout, "|--------------|--------------------|\n");
     fprintf(stdout, "|   hashcode   |   premier lexeme   |\n");
     fprintf(stdout, "|--------------|--------------------|\n");
@@ -238,7 +285,7 @@ void afficher_table_hashcode(int* hashcode){
        fprintf(stdout, "|--------------|--------------------|\n");
    }
    
-   fprintf(stdout, "\n\n");
+   fprintf(stdout, "\n\n\n");
    
 }
 
