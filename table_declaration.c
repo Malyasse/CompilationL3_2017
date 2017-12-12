@@ -20,7 +20,13 @@ void initialisation_table_declaration(table_declaration* table){   /*Duraj Basti
         table->suivant[i] = -1;   
     }
     
-    table->dernier_debordement = TAILLE_ZONE_DEBORDEMENT;   /* fixe l'indice du premier element disponible pour le debordement a la fin de la zone primaire */
+    table->dernier_debordement = TAILLE_TABLE_DECLARATION;   /* fixe l'indice du premier element disponible pour le debordement a la fin de la zone primaire */
+    
+    inserer_declaration(table, 0, TYPE_B, 0, -1, 1);
+    inserer_declaration(table, 1, TYPE_B, 0, -1, 1);
+    inserer_declaration(table, 2, TYPE_B, 0, -1, 1);
+    inserer_declaration(table, 3, TYPE_B, 0, -1, 1);
+    inserer_declaration(table, 4, TYPE_B, 0, -1, 1);
 
 }
 
@@ -45,7 +51,7 @@ int ajouter_debordement(table_declaration* table, int nature, int region, int de
         table->execution[table->dernier_debordement] = execution;
         table->suivant[table->dernier_debordement] = -1;
         
-        table->dernier_debordement ++;  /* defini le prochaine emplacement pour l'insertion */
+        table->dernier_debordement += 1;  /* defini le prochaine emplacement pour l'insertion */
         return table->dernier_debordement-1  /* retourne l'indice de la declaration */;
     }else{
         fprintf(stdout, "Plus de place dans la partie debordement de la table des declarations.\n");  /* message si zone pleine */
@@ -80,10 +86,13 @@ int recupere_type(table_declaration* table, int num_lex){    /*Duraj Bastien*/
 }
 
 
-void afficher_table_declaration(table_declaration* table){   /*Duraj Bastien*/
+void afficher_table_declaration(table_declaration* table, int t){   /*Duraj Bastien*/
     int i = 0;
     int j;
     int taille;
+
+    if (t == -1)
+        t = TAILLE_TABLE_DECLARATION;
 
 
     fprintf(stdout, "Affichage de la table des declarations\n\n");
@@ -95,7 +104,7 @@ void afficher_table_declaration(table_declaration* table){   /*Duraj Bastien*/
     fprintf(stdout, "|----------------|------------------|----------------------|---------------------------|-------------------------|---------------------|\n");
  
  
-    while (i < TAILLE_TABLE_DECLARATION){   //table->dernier
+    while (i < t){
     
        fprintf(stdout,"|        %d", i);
        
@@ -193,7 +202,7 @@ void afficher_table_declaration(table_declaration* table){   /*Duraj Bastien*/
 
 
     i = TAILLE_TABLE_DECLARATION;
-    while (i < table->dernier_debordement){       //TAILLE_TABLE_DECLARATION+TAILLE_ZONE_DEBORDEMENT
+    while (i < table->dernier_debordement){ 
     
        fprintf(stdout,"|        %d", i);
        

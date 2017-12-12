@@ -65,7 +65,7 @@ int recupere_type(table_declaration* table, int num_lex);
 
 
 /********************************
-Fonction :void afficher_table_declaration(table_declaration* table);
+Fonction :void afficher_table_declaration(table_declaration* table, int t);
 Auteur : Duraj Bastien
 
 *input
@@ -73,7 +73,7 @@ Auteur : Duraj Bastien
 
 ********************************/
 
-void afficher_table_declaration(table_declaration* table);
+void afficher_table_declaration(table_declaration* table, int t);
 
 
 #endif
