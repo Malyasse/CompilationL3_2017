@@ -36,6 +36,6 @@ pile.o: pile.c pile.h
 mon_allocation.o: mon_allocation.c mon_allocation.h
 	$(CC) -Wall -c mon_allocation.c
 clean:
-	rm -f *.o *~ y.output y.tab.h lex.yy.c y.tab.c 
+	rm -f *.o *~  y.tab.h lex.yy.c y.tab.c 
 
 

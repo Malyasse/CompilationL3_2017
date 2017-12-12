@@ -13,7 +13,7 @@
 
 #define TYPE_B 1
 #define TYPE_S 2
-#define TYPE_T 3
+#define TYPE_T 51
 #define VAR 4
 #define PROC 5
 #define FUN 6
@@ -48,6 +48,17 @@
 #define A_INCREMENT 37
 #define A_NON 38
 #define A_DECREMENT 39
+#define ERREUR_VIDE 40
+#define DIV_ZERO 41
+#define NON_EVAL 42
+#define E_INT 0
+#define E_REEL 1
+#define E_CHAINE 4
+#define E_BOOL 2
+#define E_CARAC 3
+#define EVAL 48
+#define CONFLIT_TYPE 49
+#define NOEUD_INCONNU 50
 
 
 
