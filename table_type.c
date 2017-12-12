@@ -19,7 +19,7 @@ void initialisation_table_type(table_type* tab_type){
 
 }
 
-
+/*
 void insere_type(table_type* tab_type, int num_lex, int taille, int* taille_argument){
      int i;
      int dernier = tab_type->dernier;
@@ -38,8 +38,26 @@ void insere_type(table_type* tab_type, int num_lex, int taille, int* taille_argu
 
      tab_type->dernier += taille+2;
 
-}
+}*/
+ void insere_type(int element , table_type* tab_type){/*Carreteros Laetitia*/
+ 	int dernier=tab_type->dernier;
+ 	
+ 	if(dernier - 1 >TAILLE_TABLE_TYPE){
+ 		fprintf(stderr,"Ajout impossible taille maximum atteint\n");
+ 		exit(-1);
+ 	}
+ 	
+ 	tab_type->tab[dernier] = element;
+ 	tab_type->dernier++;
+ }
 
+void insere_dimension ( int nombre , int emplacement , table_type * tab_type){/*Carreteros Laetitia*/
+	if(emplacement>TAILLE_TABLE_TYPE){
+		fprintf(stderr,"Ajout impossible , erreur indice \n");
+		exit(-1);
+	}
+	tab_type->tab[emplacement]=nombre;
+}
 
 void afficher_table_type(table_type *tab_type){        /*Duraj Bastien*/
     int i = 0;
