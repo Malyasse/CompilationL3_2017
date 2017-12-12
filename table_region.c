@@ -13,28 +13,33 @@
 
 
 void initialisation_table_region(tab_region* table_reg){
-  int i=0;
+  int i = 0;
 
-  table_reg->courant=0;
+  table_reg->courant = 0;
   while(i<TAILLE_TABLE_REGION){
     
     table_reg->taille[i] = 0;
     table_reg->nis[i] = 0;
     table_reg->p_arbre[i] = arbre_vide();
     i++;
-  };
+    
+  }
 
 }
 
-void ajouter_region(int taille,int nis,arbre p_arbre,tab_region* tab_reg){
+void ajouter_region(int taille, int nis, arbre p_arbre, tab_region* tab_reg){
+  fprintf(stderr, "%d\n", tab_reg->courant);
   
-  if(tab_reg->courant<TAILLE_TABLE_REGION){
+  if(tab_reg->courant < TAILLE_TABLE_REGION){
    
     tab_reg->taille[tab_reg->courant] = taille;
     tab_reg->nis[tab_reg->courant] = nis;
     tab_reg->p_arbre[tab_reg->courant] = p_arbre;
-    tab_reg->courant+=1;
+    tab_reg->courant += 1;
+    
   }
+  
+  
 }
 
 
