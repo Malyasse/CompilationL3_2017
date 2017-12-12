@@ -2,17 +2,32 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    
     #include "arbre.h"
     #include "table_lexicographique.h"
     #include "table_declaration.h"
     #include "table_region.h"
     #include "table_type.h"
     #include "pile.h"
-
+    #include "y.tab.h"
+    #include "grammaire_CPYRR.h"
+  
     int region = 0;
     int decalage = 0;
     int taille_region = 0;
-    int taille_arg[ARGUMENT_MAX];  // servira a stocker la taille et la nature des arguments d'une fonction/procedure et des champs
+    int dernier;
+    int nature = 0;
+    int declaration_en_cours;
+    int dimension_tableau;
+    int compteur_elements;
+    int appel_en_cours;
+    int nombre_arguments = 0 ;
+    int indice_lexeme = 0  ;
+    int retour_arg_valide;
+    int resultat_expression;
+    int expression_bool=0;
+    int future_type=0;
+    int condition_t; //Permet de savoir si on est dans une condition if , while ,tant que
     table_declaration table_declare;
     tab_region tab_reg;
     table_type tab_type;
@@ -60,12 +75,12 @@
 
 
 %%
-programme             : PROG corps  {fprintf(stderr,"ici 1\n");}  {$$ = $2; afficher_arbre_horizontal($2, 6, 1, stdout); /*afficher_arbre($2);*/}
+programme             : PROG  corps    {$$ = $2; pile = depile(pile); afficher_arbre_horizontal($2, 6, 1, stdout); /*afficher_arbre($3);*/}
 ;
 
-corps                 : /*{region ++; empile(pile, region); ajouter_region(0, region, arbre_vide(), &tab_reg);}*/ {$$ = arbre_vide();}
-                      | /*{region ++; /*empile(pile, region); ajouter_region(0, region, NULL, &tab_reg);}*/ liste_declarations /*{set_taille_region(taille_region, &tab_reg, region);*/ /*taille_region = 0;}*/    liste_instructions {/*set_arbre_region($4, &tab_reg, region); depile(pile); */$$ = $2;}
-                      | /*{region ++; empile(pile, region); ajouter_region(0, region, NULL, &tab_reg);}*/ liste_instructions {/*set_arbre_region($2, &tab_reg, region); depile(pile);*/ $$ = $1;}
+corps                 :  {pile = empile(pile, region); $$ = arbre_vide(); ajouter_region(0, sous_sommet(pile), arbre_vide(), &tab_reg); region ++; pile = depile(pile);}
+                      | {pile = empile(pile, region); ajouter_region(0, sous_sommet(pile), NULL, &tab_reg); region ++; } liste_declarations {set_taille_region(taille_region, &tab_reg, sous_sommet(pile)); taille_region = 0;}   liste_instructions {$$ = $4; set_arbre_region($4, &tab_reg, premier_element_pile(pile)); pile = depile(pile);}
+                      | liste_instructions  {$$ = $1; pile = empile(pile, region); ajouter_region(0, sous_sommet(pile), NULL, &tab_reg); region ++; set_arbre_region($1, &tab_reg, premier_element_pile(pile)); pile = depile(pile);}
 ;
 
 liste_declarations    : declaration POINT_VIRGULE {fprintf(stderr,"ici \n");}
@@ -86,11 +101,11 @@ declaration           : declaration_type {fprintf(stderr,"ici 4 \n");}
                       | declaration_fonction {fprintf(stderr,"ici 7\n");}
 ;
 
-declaration_type      : TYPE IDF DEUX_POINTS /*{inserer_type($2, nb_argument, taille_argument);}*/ suite_declaration_type
+declaration_type      : TYPE IDF DEUX_POINTS { compteur_elements = 0 ;dernier = tab_type.dernier ; tab_type.dernier +=1; declaration_en_cours =1; } suite_declaration_type  {inserer_declaration(&table_declare, $2, nature, premier_element_pile(pile), dernier, /*taille d'une valeure de ce type*/ 0); nature = 0;}
 ;
 
-suite_declaration_type : STRUCT liste_champs FSTRUCT
-                       | TABLEAU dimension DE nom_type 
+suite_declaration_type : STRUCT {nature = TYPE_S;} liste_champs FSTRUCT {insere_dimension ( compteur_elements , dernier ,&tab_type); declaration_en_cours = 0;}
+                       | TABLEAU {nature = TYPE_T;} dimension {insere_dimension ( compteur_elements , dernier ,&tab_type);} DE nom_type {insere_type($6 ,&tab_type); declaration_en_cours = 0;}
 ;
 
 dimension             : CROCHET_OUVRANT liste_dimensions CROCHET_FERMANT
@@ -100,45 +115,45 @@ liste_dimensions      : une_dimension
                       | liste_dimensions VIRGULE une_dimension
 ;
 
-une_dimension         : expression POINT_POINT expression 
+une_dimension         : CSTE_ENTIERE POINT_POINT CSTE_ENTIERE  { if(declaration_en_cours ==1 ){insere_type($1 ,&tab_type); insere_type($3 ,&tab_type); compteur_elements++; }} // expression POINT_POINT expression changer
 ;
 
 liste_champs          : un_champ POINT_VIRGULE
                       | liste_champs un_champ POINT_VIRGULE
 ;
 
-un_champ              : IDF DEUX_POINTS nom_type
+un_champ              : IDF DEUX_POINTS nom_type {insere_type($1 ,&tab_type); if (declaration_en_cours == 1) {insere_type($3 ,&tab_type); compteur_elements++;} }
 ;
 
 nom_type              : type_simple    {$$ = $1;}
                       | IDF    {$$ = $1;}
 ;
 
-type_simple           : ENTIER     {$$ = $1;}
-                      | REEL       {$$ = $1;}
+type_simple           : ENTIER        {$$ = $1;}
+                      | REEL          {$$ = $1;}
                       | BOOLEEN       {$$ = $1;}
                       | CARACTERE     {$$ = $1;}
-                      | CHAINE CROCHET_OUVRANT expression CROCHET_FERMANT     {$$ = $1;}
+                      | CHAINE CROCHET_OUVRANT expression CROCHET_FERMANT  {$$ = $1;}
 ;
 
-declaration_variable  : VARIABLE IDF DEUX_POINTS nom_type   {/* verifie_type($4); */ /*inserer_declaration(&table_declare, $2, $4, premier_element_pile(pile), 0, 0); taille_region += 1;*/}   // assoc($4),    / taille_region += taille_type(assoc($4))
+declaration_variable  : VARIABLE IDF DEUX_POINTS nom_type   {/* verifie_type($4);*/ inserer_declaration(&table_declare, $2, VAR, premier_element_pile(pile), $4,/*deplacement a l'execution*/ 0); taille_region += 1;}   // assoc($4),    / taille_region += taille_type(assoc($4))
 ;
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps
+declaration_procedure : PROCEDURE IDF /*Pas oublier declaration type faire lien avec dernier pour inserer description*/{ compteur_elements = 0 ;dernier = tab_type.dernier ; tab_type.dernier +=1; declaration_en_cours =1;} liste_parametres DEUX_POINTS  {insere_dimension ( compteur_elements , dernier ,&tab_type); inserer_declaration(&table_declare, $2, PROC, premier_element_pile(pile), dernier, region); declaration_en_cours = 0;} corps   //insere le nombre de parametre ( va par pere lexeme + type)
 ;
 
-declaration_fonction  : FONCTION IDF liste_parametres RETOURNE type_simple DEUX_POINTS corps 
+declaration_fonction  : FONCTION IDF { compteur_elements = 0 ;dernier = tab_type.dernier ; tab_type.dernier +=1; declaration_en_cours =1;} liste_parametres RETOURNE type_simple /*valeur de retour inserer auto */DEUX_POINTS  {insere_dimension ( compteur_elements , dernier ,&tab_type);  insere_type($6 ,&tab_type); inserer_declaration(&table_declare, $2, FUN, premier_element_pile(pile), dernier, region); declaration_en_cours = 0;}  corps
 ;
 
 liste_parametres      :
                       | PARENTHESE_OUVRANTE liste_param PARENTHESE_FERMANTE
                       ;
 
-liste_param           : un_param
-                      | liste_param POINT_VIRGULE un_param
+liste_param           : un_param   {}
+                      | liste_param POINT_VIRGULE un_param    //{inserer_declaration(&table_declare, $2, PROC, premier_element_pile(pile), dernier, region);}
 ;
 
-un_param              : IDF DEUX_POINTS type_simple
+un_param              : IDF DEUX_POINTS type_simple { if(declaration_en_cours == 1){ insere_type($1 ,&tab_type); compteur_elements++; insere_type($3 ,&tab_type); inserer_declaration(&table_declare, $1, VAR, region, $3, /* taille du type a l'execution  ,REGION+1 ?*/ 0);} }
 ;
 
 instruction           : affectation  { $$ = $1;}
@@ -162,7 +177,7 @@ resultat_retourne     :      {$$ = arbre_vide();}
                       | expression  {$$ = $1;}
                       ;
 
-appel                 : IDF liste_arguments   {/* verifie_type($1); */ $$ = concat_pere_fils(creer_noeud(A_IDF,$1), $2);}  //Mettre PROCEDURE liste_arguments || FONCTION liste_arguments ???
+appel                 : IDF {appel_en_cours = 1 ;  nombre_arguments = 0 ; indice_lexeme = association_de_noms( $1) ;} liste_arguments   /* verifie_type($1); */ {$$ = concat_pere_fils(creer_noeud(A_IDF,$1), $3);}  //Mettre PROCEDURE liste_arguments || FONCTION liste_arguments ???
 ;
 
 liste_arguments       : PARENTHESE_OUVRANTE VIDE PARENTHESE_FERMANTE     {$$ = creer_noeud(A_VIDE, -1);}
@@ -173,17 +188,17 @@ liste_args            : un_arg       {$$ = $1;}
                       | liste_args VIRGULE un_arg    {$$ = concat_pere_frere($1, $3);}
 ;
 
-un_arg                : expression      {$$ = $1;}
+un_arg                : expression      {if(appel_en_cours == 1 ){ nombre_arguments++;retour_arg_valide=verifier_arguments(indice_lexeme,nombre_arguments, $1 ,&resultat_expression) ;   } $$ = $1;}
 ;
 
-condition             : SI expression  
+condition             : SI  expression
                         ALORS liste_instructions 
                         SINON liste_instructions  {$$ = concat_pere_fils(creer_noeud(A_ITE,-1), concat_pere_frere($2, concat_pere_frere($4,$6)));}
-                      | SI expression  
+                       | SI expression 
                         ALORS liste_instructions {$$ = concat_pere_fils(creer_noeud(A_ITE, -1), concat_pere_frere($2,$4));}
 ;
 
-tant_que              : TANT_QUE expression FAIRE liste_instructions   {$$ = concat_pere_fils(creer_noeud(A_TANT_QUE, -1), concat_pere_frere($2,$4));}
+tant_que              : TANT_QUE  expression FAIRE liste_instructions   {$$ = concat_pere_fils(creer_noeud(A_TANT_QUE, -1), concat_pere_frere($2,$4));}
 ;
 
 affectation           : variable OPAFF expression  {$$ = concat_pere_fils(creer_noeud(A_OPAFF,-1),concat_pere_frere($1,$3));}
@@ -195,7 +210,7 @@ liste_variables       : variable      {$$ = $1;}
 
 
 variable              : IDF      {$$ = creer_noeud(A_IDF, $1);}
-                      | IDF CROCHET_OUVRANT liste_expression CROCHET_FERMANT suite_variable1 {$$ = concat_pere_fils(creer_noeud(A_IDF, $1),concat_pere_frere($3,$5 ));}
+                      | IDF CROCHET_OUVRANT {dimension_tableau = 1;} liste_expression CROCHET_FERMANT suite_variable1 {dimension_tableau = 0 ;$$ = concat_pere_fils(creer_noeud(A_IDF, $1),concat_pere_frere($4,$6 ));} //verifier_arguments
                       | IDF POINT variable   {$$ = concat_pere_fils(creer_noeud(A_IDF, $1),concat_pere_fils(creer_noeud(A_POINT, -1), $3) );}
                       ;
 
@@ -205,7 +220,7 @@ suite_variable1       :      {$$ = arbre_vide();}
 ;  
 
 
-liste_expression      : expression  {$$ = $1;}
+liste_expression      : expression  {$$ = $1;  if(dimension_tableau == 1 ){ nombre_arguments++;retour_arg_valide=verifier_arguments(indice_lexeme,nombre_arguments, $1 ,&resultat_expression) ;}} // Si liste_expression de tableau element ++
                       | liste_expression VIRGULE expression    {$$ = concat_pere_frere($1, $3);}
 ;
 
@@ -250,9 +265,9 @@ operateur1             : EGALE    {$$ =creer_noeud(A_EGALE,-1);}
 ;
 
 operateur2             : CHEVRON_INF_EGALE    {$$ =creer_noeud(A_INF_EGALE,-1);}
-                       | CHEVRON_SUP_EGALE    {$$ =creer_noeud(A_SUP_EGALE,-1);}
-                       | CHEVRON_INF    {$$ =creer_noeud(A_INF,-1);}
-                       | CHEVRON_SUP     {$$ =creer_noeud(A_SUP,-1);}
+| CHEVRON_SUP_EGALE    {$$ =creer_noeud(A_SUP_EGALE,-1);}
+                       | CHEVRON_INF    { $$ =creer_noeud(A_INF,-1);}
+                       | CHEVRON_SUP     { $$ =creer_noeud(A_SUP,-1);}
 ;
 
 operateur3             : PLUS   {$$ =creer_noeud(A_PLUS,-1);}
@@ -272,29 +287,353 @@ operateur_unaire         : INCREMENT      {$$ =creer_noeud(A_INCREMENT,-1);}
 %%
 
 
-void init_tab(int* tab, int taille);
 
-int main(){
 
-  init_hashcode(table_hashcode);
-  initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex);
-  initialisation_table_declaration(&table_declare);
-  initialisation_table_region(&tab_reg);
-  initialisation_table_type(&tab_type);
-  init_tab(taille_arg, ARGUMENT_MAX);
-  
-  yyparse();
+int association_de_noms(int numero_lexico ){/*Carreteros Laetitia*/
+  int region_haute = premier_element_pile(pile);
+  int indice= numero_lexico;
+  do { 
+    if(table_declare.region[indice] == region_haute){
+      return indice;
+    }
+    indice = table_declare.suivant[indice];
+  }while(indice != -1);
+  fprintf(stderr,"Erreur , variable non déclaré ligne %d caractere %d \n",nb_ligne, caractere);
+  return -1;
+}
 
-  afficher_table_declaration(&table_declare);
-  afficher_table_hashcode(table_hashcode);
-  afficher_table_lexicographique(&tab_lex, -1);
-  afficher_table_type(&tab_type);
-  afficher_table_region(&tab_reg);
-  exit(0);
+int verifier_arguments(int indice_lexeme_appel,int nombre_arguments, arbre arbre_expression , int* erreur){/*Carreteros Laetitia*//*Renvoie valeur de l'expression calculer a partir de l'arbre*/
+ int valide , nature_expression , nombre_arguments_origine , valeur_expression;
+ int indice_debut_description;
+ int borne_inf, borne_sup;
+ int i=0; 
+ 
+ nombre_arguments_origine = tab_type.tab[table_declare.description[indice_lexeme_appel]];
+ indice_debut_description = table_declare.description[indice_lexeme_appel];
+switch(table_declare.nature[indice_lexeme_appel]){
+	case PROC: 
+
+	    /**Quand le nombre d'arguments est supérieur **/
+		if(nombre_arguments_origine < nombre_arguments){
+   			 fprintf(stderr,"procedure %s Nombre arguments dépasser : <procedure> ", tab_lex.lexeme[indice_lexeme_appel]);//nom procedure
+   			 indice_debut_description += 2; //modifier quand machien virituelle mise TODO
+   			 for(i=0;i<nombre_arguments_origine;i++){
+			 fprintf(stderr ," type <%s> ",tab_lex.lexeme[tab_type.tab[indice_debut_description]]);  //	fprintf(stderr ," type <%s> ",tab_lex.lexeme[indice_debut_description]);
+   			 	indice_debut_description += 2; 
+   			 }
+   			 fprintf(stderr ,";\n");
+    	     *erreur = -1;
+   			 return -1;
+         }else{
+         /** Verifier argument**/
+         	valeur_expression = analyse_expression(arbre_expression,erreur,&nature_expression);
+            if(nature_expression != tab_type.tab[indice_debut_description+ 2*nombre_arguments]){//ajouter 1 pour machine virtuelle
+         		fprintf(stderr ," procedure %s argument %d incorrect type <%s> attendu ligne %d caractere %d \n",tab_lex.lexeme[indice_lexeme_appel],nombre_arguments,tab_lex.lexeme[tab_type.tab[indice_debut_description + 2* nombre_arguments]], nb_ligne , caractere);
+         		*erreur = -1;
+         		return -1;
+             }
+             return 0;  
+         }
+   
+		break;
+	case FUN:
+
+	    if(nombre_arguments_origine < nombre_arguments){
+   			 fprintf(stderr,"fonction %s Nombre arguments dépasser : <function> ", tab_lex.lexeme[indice_lexeme_appel]);//nom fonction
+   			 indice_debut_description += 2; 
+   			 for(i=0;i<nombre_arguments_origine;i++){
+   			 	fprintf(stderr ," type <%s> ",tab_lex.lexeme[indice_debut_description]);
+   			 	indice_debut_description += 2; 
+   			 }
+   			 fprintf(stderr ,"return <%s> ;\n" ,tab_lex.lexeme[indice_debut_description+1]) ;
+    	     *erreur = -1;
+   			 return -1;
+         }else{
+        	 valeur_expression = analyse_expression(arbre_expression,erreur,&nature_expression);
+          	 if(nature_expression != tab_type.tab[indice_debut_description + 2*nombre_arguments]){//ajouter 1 pour machine virtuelle
+         		fprintf(stderr ," %d fonction %s argument %d incorrect type <%s> attendu ligne %d caractere %d \n",indice_lexeme_appel,tab_lex.lexeme[indice_lexeme_appel],nombre_arguments,tab_lex.lexeme[tab_type.tab[indice_debut_description + 2* nombre_arguments]] , nb_ligne , caractere);/*Quand surcharge revoir pour afficher nom lexeme*/
+         		*erreur = -1;
+         		return -1;
+             }
+             return 0; 
+         }
+		break;
+	case TYPE_S:
+		break;
+	case TYPE_T:
+		if(nombre_arguments_origine < nombre_arguments){
+			 fprintf(stderr,"Erreur ligne %d ,Tableau %s <type> hors dimension : <tableau> ", nb_ligne,tab_lex.lexeme[indice_lexeme_appel] );  
+	     	 indice_debut_description += 2; 
+			 for(i=0;i<nombre_arguments_origine;i++){
+   			 	fprintf(stderr ," [%d .. %d]> ",tab_type.tab[indice_debut_description],tab_type.tab[indice_debut_description+1]);  
+   			 	indice_debut_description +=2;			 	
+   			 }
+   			 *erreur = -1;
+         		return -1;
+		}
+		else{
+			valeur_expression = analyse_expression(arbre_expression,erreur,&nature_expression);
+		    if(nature_expression != E_INT){
+		    	fprintf(stderr,"Erreur  ligne %d Tableau %s dimension  = entier , ici reçu nature : %s " , nb_ligne,tab_lex.lexeme[indice_lexeme_appel],tab_lex.lexeme[nature_expression]  )
+		    	;*erreur = -1; fprintf(stderr ,";\n");
+   			    return -1;
+		    }else{
+		    	borne_inf=tab_type.tab[indice_debut_description+2*nombre_arguments];
+		    	borne_sup=tab_type.tab[indice_debut_description+(2*nombre_arguments)+1];
+		    	
+		        if(valeur_expression < borne_inf || valeur_expression > borne_sup){
+		        
+		        	fprintf(stderr,"Erreur de borne ligne %d Tableau %s [%d .. %d]",nb_ligne , tab_lex.lexeme[indice_lexeme_appel],borne_inf , borne_sup);
+		        }
+		         return 0; 	    
+		    }
+		}
+		
+		break;
+	default:
+		fprintf(stderr,"Autre cas gérer dans verifier arguments\n"); return 0; 
+
+   }
+   return 0;
+
 
 }
 
+void verifier_nbr_arguments_suffisant(){
 
+}
+
+int analyse_expression(arbre a, int* erreur, int* nature){     /* Duraj Bastien */
+    int r1, r2;
+    int n = 0;
+    int n1;
+    
+    
+    if (est_vide(a)){    // ne devrait jamais arriver
+    	return 0;
+    }
+    
+    
+    switch (a->type_noeud){
+    
+    case A_PLUS:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        
+        n1 = n;
+        r2 = analyse_expression(a->frere, erreur, &n);
+        if (n != n1){
+            *erreur = CONFLIT_TYPE;
+            return -1;
+        }
+    
+    	return r1 + r2;      // reste a verifier si les types sont non evaluables
+        
+    case A_MOINS:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        
+        n1 = n;
+        r2 = analyse_expression(a->frere, erreur, &n);
+        if (n != n1){
+            *erreur = CONFLIT_TYPE;
+            return -1;
+        }
+    
+    	return r1 - r2;     // reste a verifier si les types sont non evaluables
+        
+    case A_MULT:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        if (n != n1){
+            *erreur = CONFLIT_TYPE;
+            return -1;
+        }
+        
+        return r1*r2;     // reste a verifier si les types sont non evaluables
+        
+    case A_MODULO:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        
+        if (n1 == n){
+            if ((r2) != 0)
+        	    return r1%r2;     // reste a verifier si les types sont non evaluables
+        	else{
+        	    if (*erreur == ERREUR_VIDE)
+        	        *erreur = DIV_ZERO;
+        	    return 0;
+        	}
+    	}else{
+            *erreur = CONFLIT_TYPE;
+            return -1;
+    	}
+        
+    case A_DIV:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        
+        if (n1 == n){
+            if ((r2) != 0)
+        	    return r1/r2;     // reste a verifier si les types sont non evaluables
+        	else{
+        	    if (*erreur == ERREUR_VIDE)
+        	        *erreur = DIV_ZERO;
+        	    return 0;
+        	}
+    	}else{
+            *erreur = CONFLIT_TYPE;
+            return -1;
+    	}
+        
+    case A_INF:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_INF_EGALE:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_SUP:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_SUP_EGALE:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_DIFF:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_EGALE:
+        r1 = analyse_expression(a->fils, erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+             return -1;*/
+        n1 = n;
+        r2 = analyse_expression(a->frere , erreur, &n);
+        /*if (*erreur != ERREUR_VIDE)
+            return -1;*/
+            
+        if (n != n1)
+            *erreur = CONFLIT_TYPE;
+        
+        *nature = E_BOOL;
+        return a->num_lexico;
+        
+    case A_CSTE:
+        *erreur = EVAL; 
+        *nature = E_INT;      // remplacer par la valeur de la table des daclarations
+        return a->num_lexico;
+        
+    case A_CSTR:
+        *erreur = NON_EVAL;
+        *nature = E_REEL;         // remplacer par la valeur de la table des daclarations
+        return a->num_lexico;
+        
+    case A_CST_CHAINE:
+        *erreur = NON_EVAL;
+        *nature = E_CHAINE;       // remplacer par la valeur de la table des daclarations
+        return a->num_lexico;
+        
+    case A_CST_BOOL:
+        *erreur = NON_EVAL;
+        *nature = E_BOOL;         // remplacer par la valeur de la table des daclarations
+        return a->num_lexico;
+        
+    case A_CST_CARAC:
+        *erreur = NON_EVAL;
+        *nature = E_CARAC;      // remplacer par la valeur de la table des daclarations
+        return a->num_lexico;
+        
+    case A_IDF:
+        *erreur = NON_EVAL;
+        *nature = E_INT;    // recupere le type du lexeme recupere_type(association_noms(a->num_lex))
+        return a->num_lexico;
+        
+    default:
+        *erreur = NOEUD_INCONNU;
+        return -1;
+    
+    }
+ }
+int main(){
+
+  init_hashcode(table_hashcode);
+  initialisation_tab_lex(TAILLE_TAB_LEXICO, &tab_lex, table_hashcode);
+  initialisation_table_declaration(&table_declare);
+  initialisation_table_region(&tab_reg);
+  initialisation_table_type(&tab_type);
+  
+  yyparse();
+
+  //afficher_table_hashcode(table_hashcode);
+  afficher_table_lexicographique(&tab_lex, -1);
+  afficher_table_type(&tab_type);
+  afficher_table_declaration(&table_declare, 25);
+ // afficher_table_region(&tab_reg);
+  exit(0);
+
+}
 int yyerror(){
     fprintf(stderr,"Erreur de syntaxe a la ligne %d pres du caractere %d \n", nb_ligne, caractere);
     return 0;
@@ -305,15 +644,6 @@ int yyerror(){
 
 }*/
 
-
-void init_tab(int* tab, int taille){
-    int i;
-    
-    for (i=0; i<taille; i++){
-        tab[i] = 0;
-    }
-
-}
 
 
 
