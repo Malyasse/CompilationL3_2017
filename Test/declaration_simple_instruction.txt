@@ -1,0 +1,22 @@
+Cpyrr
+type tml : array [5..7] of int;
+procedure p (a:int ; b:double ; s:string[5]):   
+    type a_8: struct
+      
+        testy : char;
+        teste : string[5];
+    fstruct;
+{
+ void
+};
+
+function coucou(d:int) return int :
+{
+  return 4;
+};
+{ 
+
+   tml[1] := 2;
+   p("q" ,3.12,5,"jk");
+   coucou("er");
+}
