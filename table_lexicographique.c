@@ -13,7 +13,7 @@
 int chainecmp(char* ch1, char* ch2){     // remplace strcmp qui ne fonctionne pas
     int i = 0;
 
-    while (ch1[i] == '\0' && ch2[i] == '\0'){
+    while (ch1[i] != '\0' && ch2[i] != '\0'){
         
         if (ch1[i] == ch2[i]){
             i ++;
@@ -88,10 +88,9 @@ int inserer_lexeme(char* lexeme, tab_lexico* tab_lex, int tab_hash_code[TAILLE_T
        suivant = indice_lexeme_suivant(precedent, tab_lex);    /* recupere le lexeme suivant du premier lexeme si le premier existe*/
    }while (suivant != -1 && chainecmp(lexeme, tab_lex->lexeme[precedent]) != 0);    /* on change le suivant et on redefinie le precedent tant qu'il existe un lexeme de meme hashcode */
       
-      
    if (suivant == -1){
-       if (chainecmp(lexeme, tab_lex->lexeme[suivant]) == 0){
-           return suivant;
+       if (chainecmp(lexeme, tab_lex->lexeme[precedent]) == 0){
+           return precedent;
        }else{
            indice_nouveau_lexeme = ajouter_lexeme(lexeme, tab_lex);   /* on ajoute le lexeme a la suite dans le tableau */
            definir_lexeme_suivant(indice_nouveau_lexeme, precedent, tab_lex);   /* changer le champ suivant du lexeme precedent */
@@ -116,7 +115,7 @@ char* lexeme(int numero_lexico, tab_lexico tab_lex){   /*Duraj Bastien*/
 }
 
 
-void  initialisation_tab_lex(int taille , tab_lexico* tab_lex){  /*Carreteros Laetitia*/
+void  initialisation_tab_lex(int taille , tab_lexico* tab_lex, int tab_hash_code[TAILLE_TAB_HASH_CODE]){  /*Carreteros Laetitia*/
        int i;
  
        tab_lex->longueur = (int*)malloc(taille * sizeof(int));   /*Allouement memoire du champ longueur de la structure passer en parametre*/
@@ -132,6 +131,13 @@ void  initialisation_tab_lex(int taille , tab_lexico* tab_lex){  /*Carreteros La
        }
        
        tab_lex->dernier = 0; //Initialisation de l'indice ou va être inserer le premier lexeme
+       
+       
+       inserer_lexeme("int", tab_lex, tab_hash_code);
+       inserer_lexeme("double", tab_lex, tab_hash_code);
+       inserer_lexeme("bool", tab_lex, tab_hash_code);
+       inserer_lexeme("char", tab_lex, tab_hash_code);
+       inserer_lexeme("string", tab_lex, tab_hash_code);
 }
 
 

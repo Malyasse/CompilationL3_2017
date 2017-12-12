@@ -17,7 +17,7 @@ Fonction :void initialisation_tab_lex(int taille, tab_lexico* tab_lex)
 Auteur :Carreteros Laetitia
 
 ********************************/
-void initialisation_tab_lex(int taille , tab_lexico* tab_lex);
+void initialisation_tab_lex(int taille , tab_lexico* tab_lex, int tab_hash_code[TAILLE_TAB_HASH_CODE]);
 
 
 /********************************
