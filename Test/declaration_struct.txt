@@ -1,0 +1,11 @@
+Cpyrr
+
+
+type t: array[1..8] of int;
+type t: array[1..8] of int;
+
+{
+   void
+}
+
+
