@@ -41,11 +41,32 @@ Pile depile(Pile p){
 }
 
 int premier_element_pile(Pile p){
+  
   if(est_pile_vide(p)){
-    exit(-1);
+      fprintf(stderr, "ErrPointeurNull::pile.c::premier_element_pile()::PileVide\n");
+      exit(-1);
   }
+  
+  
   return p->donnee;
 }
+
+
+int sous_sommet(Pile p){
+  
+  if(est_pile_vide(p)){
+      fprintf(stderr, "ErrPointeurNull::pile.c::premier_element_pile()::PileVide\n");
+      exit(-1);
+  }
+  
+  
+  if (!est_pile_vide(p->suivant))
+      return p->suivant->donnee;
+  
+  return 0;
+  
+}
+
 
 void affiche_pile(Pile p){
 

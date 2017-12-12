@@ -37,6 +37,14 @@ Pile depile(Pile p);
  */
 int premier_element_pile(Pile p);
 
+
+/*
+  fonction: int sous_sommet(Pile p);
+  ** Renvoie le sous sommet d'une pile s'il existe sinon renvoie 0
+ */
+int sous_sommet(Pile p);
+
+
 /*
   fonction: void affiche_pile(Pile p);
   ** Affiche le contenu de la pile passer en parametre
